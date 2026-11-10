@@ -1,0 +1,2532 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QUANT NIS2 Karte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+--ink:#FAFAFA;--ink-soft:#A1A1AA;--paper:#09090B;--paper-dim:#27272A;--line:#3F3F46;
+--brass:#DFE104;--brass-dim:#27272A;--green:#DFE104;--green-bg:#27272A;--orange:#FAFAFA;--orange-bg:#27272A;
+--red:#A1A1AA;--red-bg:#27272A;--grey:#A1A1AA;--accent:#DFE104;
+font-family:'Space Grotesk','Inter',system-ui,sans-serif;box-sizing:border-box;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;border-radius:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-weight:500;line-height:1.45;font-size:clamp(1rem,.92rem + .3vw,1.2rem);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--paper);z-index:60}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.03;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+::selection{background:var(--accent);color:#000}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+h1,h2,h3,.serif,.section-title,.verdict,.q-title{font-family:inherit;font-weight:700;text-transform:uppercase;letter-spacing:-.04em;line-height:.95;margin:0}
+.mono{font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+[style*="border-radius:50%"]{border-radius:0!important}
+.hidden{display:none!important}
+
+/* header + tabs */
+header.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 16px;padding:14px clamp(14px,2.5vw,40px);border-bottom:2px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);z-index:30}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand .mark{font-size:1.5rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:-.04em}
+.brand .sub{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);font-weight:700}
+.presence{display:flex;gap:8px;align-items:center;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--ink-soft)}
+.presence .dot,.sync-note .dot{width:10px;height:10px;background:var(--accent);display:inline-block}
+.tabs{display:flex;gap:4px;overflow-x:auto;flex:1 1 100%;order:3;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.top nav{display:flex;gap:4px}
+.tab,.top nav a{font-family:inherit;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;min-height:44px;padding:0 16px;display:inline-flex;align-items:center;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none}
+.tab:hover,.top nav a:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab.active,.top nav a.active{background:var(--accent);border-color:var(--accent);color:#000}
+
+/* marquee strip (incident deadlines) */
+.marquee{overflow:hidden;background:var(--accent);color:#000}
+.marquee-track{display:flex;width:max-content;animation:mq 28s linear infinite}
+.marquee-group{display:flex;flex-shrink:0;align-items:center}
+.marquee-group span{padding:10px 28px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.marquee-group span::after{content:"\2726";margin-left:56px}
+@keyframes mq{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+main{max-width:min(95vw,1280px);margin:0 auto;padding:clamp(24px,4vw,56px) clamp(14px,2.5vw,32px) 120px}
+.view{display:none}.view.active{display:block}
+.card{border:2px solid var(--line);background:var(--paper);padding:clamp(20px,3vw,40px);margin-bottom:24px}
+.section-title{font-size:clamp(1.6rem,3.6vw,3.2rem);margin:0 0 20px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.hint{color:var(--ink-soft);font-size:1rem;line-height:1.5;max-width:68ch;margin:0 0 20px}
+#view-vednis h3{font-size:clamp(1.4rem,2.6vw,2.4rem)!important;line-height:1!important}
+
+/* buttons */
+.btn{font-family:inherit;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:-.01em;padding:0 26px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--accent);background:var(--accent);color:#000;cursor:pointer;transition:transform .2s ease-in-out,background-color .2s,color .2s}
+.btn:hover{transform:scale(1.05)}.btn:active{transform:scale(.95)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:none}
+.btn.small{padding:0 16px;font-size:.72rem;min-height:44px}
+.btn.ai{background:transparent;color:var(--accent);border-color:var(--accent)}
+.btn.ai:hover{background:var(--accent);color:#000;transform:none}
+.btn:disabled{opacity:.5;pointer-events:none}
+.skip{background:none;border:0;color:var(--ink-soft);font-family:inherit;font-weight:700;text-transform:uppercase;font-size:.75rem;letter-spacing:.1em;text-decoration:underline;cursor:pointer;min-height:44px}
+
+/* forms */
+input[type=text],input[type=number],input[type=date],select{font-family:inherit;font-size:1rem;font-weight:500;min-height:48px;padding:10px 2px;width:100%;border:0;border-bottom:2px solid var(--line);background:transparent;color:var(--ink)}
+textarea{font-family:inherit;font-size:1rem;font-weight:500;width:100%;min-height:72px;padding:12px;border:2px solid var(--line);background:transparent;color:var(--ink);resize:vertical}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+::placeholder{color:#71717A}
+label{display:block;margin-bottom:6px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft)}
+.field{margin-bottom:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* tables */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);padding:10px 8px;border-bottom:2px solid var(--ink)}
+td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:hover td{background:var(--paper-dim)}
+
+/* badges (status is also carried by the label text) */
+.badge,.result-badge,.crumb{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:2px solid var(--line);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.badge.green,.result-badge.green{background:var(--accent);border-color:var(--accent);color:#000}
+.badge.orange,.result-badge.orange{border-color:var(--accent);color:var(--accent)}
+.badge.red,.result-badge.red{border-color:var(--ink);color:var(--ink)}
+.badge.grey{color:var(--ink-soft)}
+.result-badge{padding:9px 18px;font-size:.8rem;margin-bottom:20px}
+.result-badge .dotc{width:10px;height:10px;background:currentColor}
+.pill-row,.trail{display:flex;gap:6px;flex-wrap:wrap}
+.trail{display:none;margin-bottom:24px}.trail.show{display:flex}
+
+/* heat grid */
+.heatgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1px;background:var(--line);border:2px solid var(--line);margin-bottom:28px}
+.heatcell{background:var(--paper);padding:16px;cursor:pointer;transition:background-color .2s,color .2s}
+.heatcell:hover,.heatcell.sel{background:var(--accent);color:#000}
+.heatcell .cn,.heatcell .cat-name{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;min-height:2.8em;margin-bottom:8px}
+.heatcell .num,.heatcell .cat-num{font-size:clamp(2rem,3.5vw,3.2rem);font-weight:700;letter-spacing:-.05em;line-height:1}
+.heatcell .bar,.heatcell .cat-bar{height:6px;background:var(--line);margin-top:10px;position:relative;overflow:hidden}
+.heatcell .bar i,.heatcell .cat-bar i{position:absolute;left:0;top:0;bottom:0}
+.heatcell:hover :is(.num,.cat-num,.cat-warn),.heatcell.sel :is(.num,.cat-num,.cat-warn){color:#000!important}
+.heatcell:hover :is(.bar,.cat-bar),.heatcell.sel :is(.bar,.cat-bar){background:rgba(0,0,0,.25)}
+.heatcell:hover :is(.bar,.cat-bar) i,.heatcell.sel :is(.bar,.cat-bar) i{background:#000!important}
+.cat-warn{font-size:.7rem;margin-top:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+/* segmented controls */
+.seg{display:flex;border:2px solid var(--line);flex-wrap:wrap}
+.seg button{font-family:inherit;font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;min-height:44px;padding:0 14px;border:0;border-right:1px solid var(--line);background:transparent;color:var(--ink-soft);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button:hover{background:var(--ink);color:var(--paper)}
+.seg button.on{background:var(--accent);color:#000}
+.seg button.on.na{background:var(--ink-soft)}
+.mat-row,.mat-select{display:flex;gap:4px}
+.mat-dot{width:44px;height:44px;border:2px solid var(--line);background:transparent;font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mat-dot:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mat-dot.on{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+
+/* AI box, misc */
+.ai-box{display:none;border:2px solid var(--accent);background:var(--paper-dim);padding:16px;margin-top:12px;font-size:.95rem;line-height:1.5}
+.ai-box.show{display:block}
+.ai-box .lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:8px}
+.who{font-size:.72rem;color:var(--ink-soft);margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.empty-state{color:var(--ink-soft);padding:24px 0}
+.sync-note{font-size:.75rem;color:var(--ink-soft);display:flex;align-items:center;gap:8px;margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+
+/* read-only (management) view */
+body.readonly .edit-only{display:none!important}
+body.readonly input,body.readonly textarea{border-color:transparent;background:transparent;padding-left:0;pointer-events:none;color:var(--ink)}
+body.readonly input::placeholder,body.readonly textarea::placeholder{color:transparent}
+body.readonly .seg button,body.readonly .mat-dot{pointer-events:none}
+body.readonly .seg button:not(.on),body.readonly .mat-dot:not(.on){opacity:.35}
+.readonly-banner{display:none;background:var(--ink);color:#000;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:10px clamp(14px,2.5vw,32px);text-align:center}
+body.readonly .readonly-banner{display:block}
+body.readonly #readonly-toggle{background:var(--ink);color:var(--paper)}
+
+/* free-check wizard pieces */
+.intro{margin-bottom:48px}
+.intro h1{font-size:clamp(2.5rem,9vw,8rem);line-height:.88;letter-spacing:-.05em;margin:0 0 24px}
+.intro p{color:var(--ink-soft);max-width:44rem;font-size:clamp(1.05rem,1vw + .7rem,1.4rem);margin:0 0 12px}
+.intro .flagline{display:inline-flex;margin-top:16px;border:2px solid var(--accent);color:var(--accent);padding:6px 14px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.rail{display:flex;align-items:center;margin:0 0 36px;overflow-x:auto}
+.rail .node{display:flex;align-items:center;flex-shrink:0}
+.rail .dot{width:40px;height:40px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--ink-soft);background:var(--paper);flex-shrink:0}
+.rail .dot.done{background:var(--accent);border-color:var(--accent);color:#000}
+.rail .dot.now{border-color:var(--accent);color:var(--accent)}
+.rail .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--ink-soft);margin-left:10px;white-space:nowrap}
+.rail .label.now{color:var(--ink)}
+.rail .seg{display:block;width:36px;height:2px;border:0;background:var(--line);margin:0 12px;flex-shrink:0}
+.q-kicker{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.q-title{font-size:clamp(1.6rem,3.6vw,3rem);line-height:.98;margin-bottom:14px}
+.q-why{color:var(--ink-soft);max-width:62ch;margin:0 0 24px;line-height:1.5}
+.q-why .ref,.verdict-sub .ref,.chain .ref,.cref,.ref{font-family:'IBM Plex Mono',monospace;font-size:.8em;color:var(--ink-soft)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:16px;text-align:left;width:100%;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:18px 20px;min-height:56px;font-family:inherit;font-weight:700;font-size:clamp(1rem,1.2vw + .5rem,1.25rem);cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+.opt:hover{background:var(--accent);border-color:var(--accent);color:#000}
+.opt .letter{font-family:'IBM Plex Mono',monospace;color:var(--accent);width:24px;flex-shrink:0;text-transform:uppercase}
+.opt:hover .letter{color:#000}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:26px}
+.verdict{font-size:clamp(2rem,6vw,5rem);line-height:.92;margin:0 0 14px}
+.verdict-sub{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;line-height:1.5}
+.chain{border-left:4px solid var(--accent);padding-left:22px;margin:26px 0 32px}
+.chain .step{margin-bottom:16px;position:relative}
+.chain .step::before{content:"";position:absolute;left:-30px;top:8px;width:10px;height:10px;background:var(--accent)}
+.flags{display:flex;flex-direction:column;gap:8px;margin-bottom:32px}
+.flag{display:flex;gap:10px;padding:14px 16px;border:2px solid var(--line);font-size:.9rem;line-height:1.5;color:var(--ink-soft)}
+.flag b{color:var(--ink)}
+.cta-row{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+.controls-panel{border:2px solid var(--line);margin-bottom:32px}
+.controls-panel .ph{padding:16px 20px;border-bottom:2px solid var(--line);background:var(--paper-dim);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.controls-panel .ph h3{font-size:1.3rem}
+.control-row{padding:16px 20px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center}
+.control-row:last-child{border-bottom:0}
+.control-row .ctext .cref{display:block;margin-top:4px}
+@media(max-width:700px){.control-row{grid-template-columns:1fr}}
+.priority-list{list-style:none;padding:0;margin:0 0 32px}
+.priority-list li{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.priority-list .rank{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-weight:700;font-size:1.3rem;flex-shrink:0;width:40px}
+.priority-list .owner{display:inline-block;margin-top:6px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);border:2px solid var(--line);padding:2px 8px}
+footer.disclaimer{border-top:2px solid var(--line);margin:60px auto 0;padding:28px clamp(14px,2.5vw,40px) 44px;font-size:.85rem;color:var(--ink-soft);line-height:1.6;max-width:min(95vw,1280px)}
+
+@media (prefers-reduced-motion:reduce){
+.marquee-track{animation:none;width:auto;flex-wrap:wrap}
+.marquee-group[aria-hidden="true"]{display:none}
+.btn:hover,.btn:active{transform:none}
+*{transition-duration:.01ms!important}}
+
+
+.save-status{font-family:inherit;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;min-height:44px;padding:0 14px;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:default}
+.save-status[data-state=busy],.save-status[data-state=warn]{color:var(--accent);border-color:var(--accent)}
+.save-status[data-state=error]{background:var(--accent);border-color:var(--accent);color:#000;cursor:pointer}
+.ev-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:2px solid var(--line);margin-bottom:12px}
+.ev-cell{background:var(--paper);padding:16px;display:flex;flex-direction:column}
+.ev-num{font-size:clamp(2rem,4vw,3.4rem);font-weight:700;letter-spacing:-.05em;line-height:1}
+.ev-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-top:6px}
+.ev-note{font-size:.85rem;color:var(--ink-soft);margin:0 0 20px;max-width:68ch}
+.ev-row{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:12px;align-items:end;margin-top:8px}
+@media(max-width:700px){.ev-row{grid-template-columns:1fr}}
+.mono-ta{font-family:'IBM Plex Mono',monospace;font-size:.8rem;min-height:160px}
+.hint[data-err="1"]{color:var(--accent);font-weight:700}
+.norm-link{color:var(--accent);font-weight:700}
+td input[type=date],td input[type=text]{min-width:130px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark" id="brand-mark">NIS2</span><span class="sub" id="brand-sub">Sagatavotības Karte</span>
+  </div>
+  <button class="btn ghost small" id="switch-project-btn" style="display:none;">⇄ Mainīt projektu</button>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-view="celvedis">Ceļvedis</button>
+    <button class="tab" data-view="vednis">Vednis</button>
+    <button class="tab" data-view="pase">Pase</button>
+    <button class="tab" data-view="piemerojamiba">Piemērojamība</button>
+    <button class="tab" data-view="kalendars">Kalendārs</button>
+    <button class="tab" data-view="aktivi">Aktīvi</button>
+    <button class="tab" data-view="gap">Gap-Assessment</button>
+    <button class="tab" data-view="tehniskie">Tehniskās pārbaudes</button>
+    <button class="tab" data-view="apmacibas">Apmācības</button>
+    <button class="tab" data-view="politikas">Politikas</button>
+    <button class="tab" data-view="jautajumi">Jautājumi</button>
+    <button class="tab" data-view="plans">Rīcības plāns</button>
+    <button class="tab" data-view="zurnals">Lēmumi</button>
+    <button class="tab" data-view="partneri">Partneri</button>
+    <button class="tab" data-view="dati">Dati un atskaite</button>
+    <button class="tab" data-view="normas">Normatīvā bāze</button>
+  </div>
+  <button type="button" class="save-status" id="save-status" data-state="busy">Ielādē…</button>
+  <button class="btn ghost small" id="readonly-toggle" title="Pārslēgt starp rediģēšanas un tikai-skatīšanas režīmu">👁 Vadības skats</button>
+</header>
+<div class="marquee" role="group" aria-label="Ziņošanas termiņi par nozīmīgiem kiberincidentiem"><div class="marquee-track"><div class="marquee-group"><span>Nozīmīgs incidents: agrīnais brīdinājums ≤ 24 h</span><span>Sākotnējais ziņojums ≤ 72 h</span><span>Galaziņojums — 1 mēnesis pēc sākotnējā ziņojuma</span><span>MK noteikumi Nr. 397</span></div><div class="marquee-group" aria-hidden="true"><span>Nozīmīgs incidents: agrīnais brīdinājums ≤ 24 h</span><span>Sākotnējais ziņojums ≤ 72 h</span><span>Galaziņojums — 1 mēnesis pēc sākotnējā ziņojuma</span><span>MK noteikumi Nr. 397</span></div></div></div>
+<div class="readonly-banner">Vadības skats — tikai skatīšanai, izmaiņas nav iespējamas. <span id="exit-readonly-link" style="text-decoration:underline; cursor:pointer; font-weight:600;">Atgriezties rediģēšanas režīmā</span></div>
+
+<div id="project-picker" style="max-width:640px; margin:60px auto; padding:0 20px;">
+  <div class="card">
+    <div class="section-title">Izvēlies vai izveido projektu</div>
+    <p class="hint">Šis instruments var vienlaikus glabāt vairākus klientu projektus, katru pilnībā nodalītu. Izvēlies esošu vai sāc jaunu.</p>
+    <div id="project-list" style="margin-bottom:20px;"></div>
+    <div style="border-top:1px solid var(--line); padding-top:18px;">
+      <label>Jauns projekts — uzņēmuma nosaukums</label>
+      <div style="display:flex; gap:10px; margin-top:6px;">
+        <input type="text" id="new-project-name" placeholder="piem., SIA &quot;Piemērs&quot;" style="flex:1;">
+        <button class="btn" id="create-project-btn">Izveidot</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="main" style="display:none;">
+  <div class="view active" id="view-celvedis"></div>
+  <div class="view" id="view-vednis"></div>
+  <div class="view" id="view-pase"></div>
+  <div class="view" id="view-piemerojamiba"></div>
+  <div class="view" id="view-kalendars"></div>
+  <div class="view" id="view-aktivi"></div>
+  <div class="view" id="view-gap"></div>
+  <div class="view" id="view-tehniskie"></div>
+  <div class="view" id="view-apmacibas"></div>
+  <div class="view" id="view-politikas"></div>
+  <div class="view" id="view-jautajumi"></div>
+  <div class="view" id="view-plans"></div>
+  <div class="view" id="view-zurnals"></div>
+  <div class="view" id="view-partneri"></div>
+  <div class="view" id="view-dati"></div>
+  <div class="view" id="view-normas"></div>
+</main>
+
+<script>
+/* ============================================================
+   BOOTSTRAP: capabilities
+   ============================================================ */
+let db = null, userCap = null, sample = null, myId = null;
+
+/* ---- safety + id helpers ---- */
+function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function uid(prefix){ return prefix + ((window.crypto && crypto.randomUUID) ? crypto.randomUUID().slice(0,13) : Date.now().toString(36) + Math.random().toString(36).slice(2,8)); }
+
+/* ---- evidence model: "filled in" is not the same as "confirmed" ---- */
+function evState(s){
+  if(!s || s.compliance==='N/A') return 'na';
+  if(s.compliance==='Jā' || s.compliance==='Daļēji') return (s.evidence && s.evDate) ? 'ok' : 'missing';
+  return 'na';
+}
+function evBadgeText(s){ var st=evState(s); return st==='ok' ? 'Pierādīts' : st==='missing' ? 'Nav apstiprināts' : '—'; }
+function evBadgeClass(s){ var st=evState(s); return st==='ok' ? 'green' : st==='missing' ? 'orange' : 'grey'; }
+function evidenceStats(){
+  var applicable=0, filled=0, evidenced=0, unconfirmed=0;
+  CONTROLS.forEach(function(c){
+    var s = controlsCache[c.id] || {};
+    if(s.compliance==='N/A') return;
+    applicable++;
+    if(s.compliance!=null || s.maturity!=null) filled++;
+    var st = evState(s);
+    if(st==='ok') evidenced++; else if(st==='missing') unconfirmed++;
+  });
+  return {applicable:applicable, filled:filled, evidenced:evidenced, unconfirmed:unconfirmed};
+}
+function refreshEvBadge(cid){
+  var el = document.querySelector('[data-role="ev-badge"][data-cid="'+cid+'"]');
+  if(!el) return;
+  var s = controlsCache[cid];
+  el.className = 'badge ' + evBadgeClass(s);
+  el.textContent = evBadgeText(s);
+}
+function renderEvidenceSummary(){
+  var el = document.getElementById('ev-summary');
+  if(!el) return;
+  var st = evidenceStats();
+  var pct = function(n){ return st.applicable ? Math.round(n/st.applicable*100) : 0; };
+  el.innerHTML =
+    '<div class="ev-cell"><span class="ev-num">'+pct(st.filled)+'%</span><span class="ev-lbl">Aizpildīts</span></div>'+
+    '<div class="ev-cell"><span class="ev-num">'+pct(st.evidenced)+'%</span><span class="ev-lbl">Pierādīts</span></div>'+
+    '<div class="ev-cell"><span class="ev-num">'+st.unconfirmed+'</span><span class="ev-lbl">Nav apstiprināti</span></div>';
+}
+
+async function initCapabilities(){
+  db = await window.claude?.use?.("db").catch(()=>null) ?? null;
+  userCap = await window.claude?.use?.("user").catch(()=>null) ?? null;
+  sample = await window.claude?.use?.("sample").catch(()=>null) ?? null;
+  if (userCap) { try { myId = await userCap.id(); } catch(e){ myId = null; } }
+  updatePresence();
+}
+
+function updatePresence(){ renderSaveStatus(); }
+
+/* ============================================================
+   READ-ONLY / MANAGEMENT VIEW TOGGLE
+   ============================================================ */
+let isReadOnly = false;
+function setReadOnly(val){
+  isReadOnly = val;
+  document.body.classList.toggle('readonly', val);
+  document.getElementById('readonly-toggle').textContent = val ? '✎ Rediģēt' : '👁 Vadības skats';
+}
+document.getElementById('readonly-toggle').addEventListener('click', ()=>setReadOnly(!isReadOnly));
+document.getElementById('exit-readonly-link').addEventListener('click', ()=>setReadOnly(false));
+
+/* ============================================================
+   PROJECT PICKER — lists/creates projects, sets currentProjectId
+   ============================================================ */
+const QUANT_SEED_ID = 'quant-sia';
+
+async function ensureQuantSeed(){
+  if(!db) return;
+  const existing = await dbGet(REGISTRY.project(QUANT_SEED_ID));
+  if(existing) return;
+  await dbSet(REGISTRY.project(QUANT_SEED_ID), {
+    name: 'SIA "Quantrum" (QUANT)',
+    sector: 'Apsardzes pakalpojumi',
+    createdAt: Date.now(),
+    createdBy: myId,
+    seeded: true,
+  });
+}
+
+async function loadProjectRegistry(){
+  if(!db) return [];
+  try {
+    const snap = await REGISTRY.projectsCol().orderBy('createdAt','desc').get();
+    return snap.docs.map(d=>({id:d.id, ...d.data()}));
+  } catch(e){ return []; }
+}
+
+async function renderProjectPicker(){
+  const picker = document.getElementById('project-picker');
+  const list = document.getElementById('project-list');
+
+  if(!db){
+    list.innerHTML = `<div class="empty-state">Dati netiek koplietoti šajā skatā — projekts tiks iestatīts lokāli.</div>`;
+    currentProjectId = QUANT_SEED_ID;
+    showMainApp('SIA "Quantrum" (QUANT)', 'Apsardzes pakalpojumi');
+    return;
+  }
+
+  await ensureQuantSeed();
+  const projects = await loadProjectRegistry();
+  list.innerHTML = '';
+  if(projects.length === 0){
+    list.innerHTML = `<div class="empty-state">Vēl nav neviena projekta.</div>`;
+  }
+  projects.forEach(p=>{
+    const row = document.createElement('button');
+    row.className = 'btn ghost';
+    row.style.cssText = 'width:100%; text-align:left; justify-content:flex-start; margin-bottom:8px; display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:12px 16px;';
+    row.innerHTML = `<strong style="font-size:.92rem;">${esc(p.name)}</strong><span style="font-size:.76rem; color:var(--grey);">${esc(p.sector || 'Nozare nav norādīta')}</span>`;
+    row.addEventListener('click', ()=>{
+      currentProjectId = p.id;
+      showMainApp(p.name, p.sector);
+    });
+    list.appendChild(row);
+  });
+
+  document.getElementById('create-project-btn').onclick = async ()=>{
+    const nameInput = document.getElementById('new-project-name');
+    const name = nameInput.value.trim();
+    if(!name) return;
+    const id = uid('proj-');
+    await dbSet(REGISTRY.project(id), {name, sector:'', createdAt: Date.now(), createdBy: myId});
+    currentProjectId = id;
+    showMainApp(name, '');
+  };
+}
+
+async function showMainApp(name, sector){
+  document.getElementById('project-picker').style.display = 'none';
+  document.getElementById('main').style.display = '';
+  document.getElementById('switch-project-btn').style.display = '';
+  const shortName = name.length > 18 ? name.slice(0,16)+'…' : name;
+  document.getElementById('brand-mark').textContent = shortName;
+  document.getElementById('brand-sub').textContent = 'NIS2 Sagatavotības Karte' + (sector ? ' · ' + sector : '');
+  await renderAll();
+}
+
+document.getElementById('switch-project-btn').addEventListener('click', ()=>{
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('switch-project-btn').style.display = 'none';
+  document.getElementById('project-picker').style.display = '';
+  currentProjectId = null;
+  renderProjectPicker();
+});
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.getElementById('tabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.tab');
+  if(!btn) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const view = btn.dataset.view;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ============================================================
+   DATA MODEL (static reference data — controls, categories)
+   ============================================================ */
+const CATEGORIES = [
+  {code:'a', name:'Risku analīzes un IS drošības politikas'},
+  {code:'b', name:'Incidentu pārvaldība'},
+  {code:'c', name:'Nepārtrauktība un krīzes vadība'},
+  {code:'d', name:'Piegādes ķēdes drošība'},
+  {code:'e', name:'Sistēmu iegāde, izstrāde, uzturēšana'},
+  {code:'f', name:'Pasākumu efektivitātes novērtēšana'},
+  {code:'g', name:'Kiberhigiēna un apmācības'},
+  {code:'h', name:'Kriptogrāfija un šifrēšana'},
+  {code:'i', name:'Personāls, piekļuves kontrole, aktīvu pārvaldība'},
+  {code:'j', name:'MFA un droša komunikācija'},
+];
+
+const CONTROLS = [
+  {id:'a1', cat:'a', text:'Kiberdrošības politika ir apstiprināta un pārskatīta ne retāk kā reizi 3 gados.', ref:'397. not. 27.-28. p.', w:'high'},
+  {id:'a2', cat:'a', text:'Risku novērtēšanas metodoloģija ir definēta un tiek piemērota.', ref:'397. not. 21.1 p.', w:'medium'},
+  {id:'b1', cat:'b', text:'Incidentu žurnāls tiek uzturēts, ieraksts ≤24h pēc atklāšanas.', ref:'397. not. 47. p.', w:'high'},
+  {id:'b2', cat:'b', text:'Ir noteiktas lomas un kontakti ziņošanai CERT.LV / SAB.', ref:'397. not. 7. sad.', w:'high'},
+  {id:'b3', cat:'b', text:'Nozīmīguma novērtēšanas procedūra (118. p. kritēriji) ir ieviesta.', ref:'397. not. 118. p.', w:'medium'},
+  {id:'c1', cat:'c', text:'Risku pārvaldības un IKT nepārtrauktības plāns eksistē un tiek pārskatīts pēc grafika.', ref:'397. not. 21.3, 40. p.', w:'high'},
+  {id:'c2', cat:'c', text:'Rezerves kopijas tiek testētas atbilstoši klasei (6 mēn. / 1 gads).', ref:'397. not. 67.-75. p.', w:'high'},
+  {id:'d1', cat:'d', text:'IKT piegādātāju kiberrisku novērtējums tiek veikts.', ref:'397. not. 86.-107. p.', w:'high'},
+  {id:'d2', cat:'d', text:'Apstiprināts, ka nav līgumu ar pakalpojumu sniedzējiem no aizliegtajām jurisdikcijām.', ref:'397. not. 86.-107. p.', w:'high'},
+  {id:'e1', cat:'e', text:'Ievainojamību pārvaldības process (atklāšana, labošana, prioritizēšana) darbojas.', ref:'Art. 21(2)(e)', w:'medium'},
+  {id:'f1', cat:'f', text:'Pašnovērtējums tiek veikts atbilstoši grafikam (ikgadēji / reizi 3 gados).', ref:'397. not. 141.-143. p.', w:'high'},
+  {id:'g1', cat:'g', text:'Jauna darbinieka pirmreizējā instruktāža ≤1 mēn. no konta izveides.', ref:'397. not. 76.1.1 p.', w:'medium'},
+  {id:'g2', cat:'g', text:'Ikgadēja apmācība visiem darbiniekiem (var integrēt esošajā Mācību centrā).', ref:'397. not. 76.1.2 p.', w:'medium'},
+  {id:'h1', cat:'h', text:'Datu šifrēšana pārraidē A un B klasēm ir ieviesta.', ref:'397. not. 81.-82. p.', w:'high'},
+  {id:'i1', cat:'i', text:'IKT resursu un IS katalogs tiek uzturēts, aktualizēts ≤1 mēn. (sk. cilni "Aktīvi").', ref:'397. not. 31. p.', w:'high'},
+  {id:'i2', cat:'i', text:'Sistēmu klasifikācija A/B/C ir veikta un dokumentēta.', ref:'397. not. Pielikums Nr.5', w:'high'},
+  {id:'i3', cat:'i', text:'MFA administratoriem ir ieviests visām sistēmām.', ref:'397. not. matrica pēc klases', w:'high'},
+  {id:'j1', cat:'j', text:'Definēts alternatīvs sakaru kanāls krīzes gadījumam.', ref:'Art. 21(2)(j)', w:'medium'},
+];
+
+const OPEN_QUESTIONS = [
+  "Kam pakļauti \"atsevišķie cilvēki\", kas atbild par IT? Vai starp viņiem ir jebkāda koordinācija?",
+  "Vai eksistē izmantoto IKT sistēmu saraksts/reģistrs (serveri, CRM, signalizācijas sistēmas ar attālo piekļuvi, kameras, mājaslapa, e-pasts)?",
+  "Kas notiek, ja klienta signalizācija vai videonovērošanas sistēma izjūk vai tiek uzlauzta — vai ir fiksēta procedūra?",
+  "Kas atbild par datu (klientu bāzes, kameru ieraksti, dokumentācija) rezerves kopijām? Cik bieži tās pārbauda?",
+  "Vai QUANT kaut kā pārbauda savus piegādātājus (kas uzstāda/apkalpo signalizācijas, kas hostē mājaslapu)?",
+  "Ko satur esošā Kvalitātes politika — vai tur ir kaut vai sadaļa par informācijas/IT drošību?",
+  "Ko ietver pašreizējā Mācību centra programma — vai tur ir kaut kas par informācijas drošību (paroles, pikšķerēšana)?",
+  "Vai kāds jau formāli atbild par GDPR (jo ir Privātuma politika)? Šī persona var būt dabisks kandidāts nākotnes kiberdrošības vadītāja lomai.",
+];
+
+const MAT_LABELS = ["Nav ieviests","Sākotnējs","Definēts","Ieviests","Pārvaldīts","Optimizējas"];
+
+/* ============================================================
+   MULTI-PROJECT NAMESPACE
+   Every piece of shared state lives under projects/{projectId}/...
+   so one instance of this tool can hold many client engagements,
+   each fully isolated, instead of one hardcoded company.
+   ============================================================ */
+let currentProjectId = null; // set after project picker / creation
+
+function pdoc(path){
+  // path like 'pase/main' -> 'projects/{id}/pase/main'
+  return db.doc(`projects/${currentProjectId}/${path}`);
+}
+function pcol(path){
+  return db.collection(`projects/${currentProjectId}/${path}`);
+}
+
+const DOC = {
+  pase: () => pdoc('pase/main'),
+  applicability: (n) => pdoc('applicability/base'+n),
+  asset: (id) => pdoc('assets/'+id),
+  assetsCol: () => pcol('assets'),
+  control: (id) => pdoc('controls/'+id),
+  question: (n) => pdoc('questions/q'+n),
+  actionNote: () => pdoc('meta/actionNotes'),
+  decisionsCol: () => pcol('decisions'),
+  calendarBase: () => pdoc('calendar/base'),
+  wizardState: () => pdoc('wizard/state'),
+  techCheck: (id) => pdoc('techChecks/'+id),
+  techStatus: () => pdoc('techChecks/status'),
+  trainingItem: (id) => pdoc('training/'+id),
+  trainingStatus: () => pdoc('training/status'),
+  policy: (id) => pdoc('policies/'+id),
+  policiesStatus: () => pdoc('policies/status'),
+};
+
+// Registry of all projects (NOT namespaced — this is the picker list itself)
+const REGISTRY = {
+  projectsCol: () => db.collection('registry/projects/list'),
+  project: (id) => db.doc('registry/projects/list/'+id),
+};
+
+/* ---- storage layer: every write reports success or failure to the UI ---- */
+const SaveState = {pending:0, lastOk:null, failed:[]};
+function renderSaveStatus(){
+  const el = document.getElementById('save-status');
+  if(!el) return;
+  let text, state;
+  if(!db){ text='Lokāls skats — nesaglabājas'; state='warn'; }
+  else if(SaveState.pending>0){ text='Saglabā…'; state='busy'; }
+  else if(SaveState.failed.length>0){ text='Kļūda saglabājot — nospied, lai atkārtotu'; state='error'; }
+  else if(SaveState.lastOk){ text='Saglabāts '+new Date(SaveState.lastOk).toLocaleTimeString('lv-LV',{hour:'2-digit',minute:'2-digit'}); state='ok'; }
+  else { text='Dati sinhronizēti'; state='ok'; }
+  el.textContent = text; el.dataset.state = state;
+}
+async function dbGet(ref){
+  try { const snap = await ref.get(); return snap.exists ? snap.data() : null; }
+  catch(e){ console.error('db get failed', e); return null; }
+}
+async function dbWrite(op){
+  SaveState.pending++; renderSaveStatus();
+  let ok = false;
+  try {
+    await op(); ok = true; SaveState.lastOk = Date.now();
+    const i = SaveState.failed.indexOf(op); if(i>=0) SaveState.failed.splice(i,1);
+  } catch(e){
+    console.error('db write failed', e);
+    if(!SaveState.failed.includes(op)) SaveState.failed.push(op);
+  } finally { SaveState.pending--; renderSaveStatus(); }
+  return ok;
+}
+async function dbSet(ref, data){ return dbWrite(()=>ref.set(data)); }
+async function dbUpdate(ref, data){
+  return dbWrite(async ()=>{ try { await ref.update(data); } catch(e){ await ref.set(data); } });
+}
+async function retryFailed(){ const ops = SaveState.failed.slice(); for(const op of ops){ await dbWrite(op); } }
+document.addEventListener('click', function(e){
+  const b = e.target.closest && e.target.closest('#save-status');
+  if(b && SaveState.failed.length) retryFailed();
+});
+window.addEventListener('beforeunload', function(e){
+  if(SaveState.pending>0 || SaveState.failed.length){ e.preventDefault(); e.returnValue = ''; }
+});
+
+/* ------------------------------------------------------------
+   Project-aware company description for AI prompts — reads the
+   actual Pase data of the CURRENT project instead of hardcoding
+   QUANT's details, so prompts stay accurate for any project.
+   ------------------------------------------------------------ */
+async function getCompanyContextForAi(){
+  const pase = db ? await dbGet(DOC.pase()) : null;
+  const name = pase?.uznemums || 'Uzņēmums (nosaukums nav norādīts "Pase" cilnē)';
+  const sector = pase?.nozare || 'nozare nav norādīta';
+  const size = pase?.darbinieki || 'darbinieku skaits nav norādīts';
+  const phase = pase?.faze || pase?.['f\u0430ze'] || '';
+  let extra = '';
+  if(db){
+    const bases = await loadApplicabilityBases();
+    if(bases.length > 0){
+      const lines = bases.filter(b=>b.title).map(b=>`- ${b.title}`).join('\n');
+      if(lines) extra = `\nZināmie specifiskie apstākļi:\n${lines}`;
+    }
+  }
+  return `Uzņēmums: ${name}\nNozare: ${sector}\nDarbinieku skaits: ${size}${extra}`;
+}
+
+function fmtWho(uid, ts){
+  if(!uid) return '';
+  const d = ts ? new Date(ts) : null;
+  const dstr = d ? d.toLocaleDateString('lv-LV') + ' ' + d.toLocaleTimeString('lv-LV', {hour:'2-digit', minute:'2-digit'}) : '';
+  return (uid === myId ? 'Es' : 'Kolēģis') + (dstr ? ' · ' + dstr : '');
+}
+
+/* ============================================================
+   VIEW: 01 Pase
+   ============================================================ */
+const PASE_FIELDS = [
+  ['uznemums', 'Uzņēmums', 'text', 'SIA "Quantrum" (Reģ. Nr. 40103423984)'],
+  ['majaslapa', 'Mājaslapa', 'text', 'https://quant.lv'],
+  ['nozare', 'Nozare (NACE 2.1)', 'text', '80.01 — Izmeklēšanas un personiskās drošības pakalpojumi'],
+  ['darbinieki', 'Darbinieku skaits (vidējais, VID)', 'text', '145'],
+  ['apgrozijums', 'Gada apgrozījums (€)', 'text', ''],
+  ['bilance', 'Bilances kopsumma (€)', 'text', ''],
+  ['atbildigais', 'Atbildīgais par projektu', 'text', ''],
+  ['faze', 'Pašreizējā fāze', 'text', 'Piemērojamības noteikšana + sākotnējais robu izvērtējums'],
+];
+
+async function renderPase(){
+  const el = document.getElementById('view-pase');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Projekta pase</div>
+      <p class="hint">Pamatdati par uzņēmumu un projekta statusu. Šie lauki ir koplietoti — izmaiņas redz visi, kas atver šo lapu.</p>
+      <div class="sync-note" id="pase-sync"><span class="dot"></span>Ielādē...</div>
+      <div class="grid2" id="pase-fields"></div>
+    </div>
+  `;
+  const container = document.getElementById('pase-fields');
+  const existing = db ? await dbGet(DOC.pase()) : null;
+  if(existing && existing.faze === undefined && existing['f\u0430ze'] !== undefined){ existing.faze = existing['f\u0430ze']; }
+  document.getElementById('pase-sync').innerHTML = db
+    ? `<span class="dot"></span>Dati koplietoti ar visiem, kam ir šī lapa`
+    : `<span class="dot" style="background:var(--grey)"></span>Lokāls skats — izmaiņas netiks saglabātas citiem`;
+
+  PASE_FIELDS.forEach(([key, label, type, placeholder])=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'field';
+    const val = existing?.[key] ?? '';
+    wrap.innerHTML = `<label>${label}</label><input type="${type}" data-key="${key}" value="${esc(val)}" placeholder="${esc(placeholder)}">`;
+    container.appendChild(wrap);
+  });
+
+  container.querySelectorAll('input').forEach(inp=>{
+    let t;
+    inp.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        if(!db) return;
+        const key = inp.dataset.key;
+        await dbUpdate(DOC.pase(), {[key]: inp.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 500);
+    });
+  });
+}
+
+/* ============================================================
+   VIEW: 02 Piemērojamība
+   ============================================================ */
+function statusBadge(status){
+  const map = {
+    green: {cls:'green', label:'✅ Apstiprināts'},
+    yellow: {cls:'orange', label:'🟡 Daļēji / iespējams'},
+    red: {cls:'red', label:'🔴 Nepieciešams precizējums'},
+  };
+  const m = map[status] || map.yellow;
+  return `<span class="badge ${m.cls}">${m.label}</span>`;
+}
+
+async function loadApplicabilityBases(){
+  if(!db) return [];
+  try {
+    // applicability docs are named base1, base2, ... — list via collection group isn't available,
+    // so we read a small fixed-size probe range (covers manually added items too, via a stored index)
+    const indexDoc = await dbGet(pdoc('applicability/_index'));
+    const ids = indexDoc?.ids || [1,2,3,4];
+    const results = [];
+    for(const n of ids){
+      const data = await dbGet(DOC.applicability(n));
+      if(data) results.push({n, ...data});
+    }
+    return results.sort((a,b)=>a.n-b.n);
+  } catch(e){ return []; }
+}
+
+async function addApplicabilityBasis(){
+  const indexDoc = await dbGet(pdoc('applicability/_index'));
+  const ids = indexDoc?.ids || [];
+  const newN = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+  const newIds = [...ids, newN];
+  if(db){
+    await dbSet(pdoc('applicability/_index'), {ids: newIds});
+    await dbSet(DOC.applicability(newN), {title:'', desc:'', ref:'', status:'yellow', note:'', _updatedAt: Date.now(), _updatedBy: myId});
+  }
+  renderPiemerojamiba();
+}
+
+async function seedQuantApplicabilityIfNeeded(){
+  if(!db || currentProjectId !== QUANT_SEED_ID) return;
+  const indexDoc = await dbGet(pdoc('applicability/_index'));
+  if(indexDoc) return; // already seeded or user already has data
+  const seed = [
+    {n:1, title:'Nozare: apsardzes pakalpojumi',
+     desc:'Apsardzes pakalpojumi tieši minēti kā "svarīga pakalpojuma sniedzēja" nozare. Lieluma tests (145 darb., iespējams mazs apgrozījums) šo pamatu vien nepadara pietiekamu.',
+     ref:'NKDL 21. p. 1. d. 2. pk.', status:'yellow'},
+    {n:2, title:'Ostas teritorijas apsardze',
+     desc:'QUANT vairākus gadus apsargā Rīgas un Ventspils brīvostas teritoriju. Transporta/ostu infrastruktūra ir "būtiska pakalpojuma sniedzēja" kategorijā. Neskaidrs, vai statuss attiecas uz apakšuzņēmēju.',
+     ref:'NKDL 20. p. 8. d.', status:'red'},
+    {n:3, title:'Nozīmīguma kritērijs (nacionālā/sabiedriskā drošība)',
+     desc:'Sadarbība ar valsts institūcijām, mācības un vingrinājumi ostu teritorijā liecina par iespējamu atbilstību šim kritērijam neatkarīgi no lieluma.',
+     ref:'NKDL 20. p. 11. d.', status:'yellow'},
+    {n:4, title:'Piegādes ķēdes loma (tehniskā apsardze klientiem)',
+     desc:'QUANT uzstāda un apkalpo signalizācijas sistēmas klientiem (bankas, tirdz. centri, ražotnes). Ja klients pats ir NIS2 subjekts, viņam būs pienākums izvērtēt QUANT kā piegādātāju.',
+     ref:'397. not. 86.-107. p.', status:'green'},
+  ];
+  for(const s of seed){
+    await dbSet(DOC.applicability(s.n), {title:s.title, desc:s.desc, ref:s.ref, status:s.status, note:''});
+  }
+  await dbSet(pdoc('applicability/_index'), {ids:[1,2,3,4]});
+}
+
+async function renderPiemerojamiba(){
+  const el = document.getElementById('view-piemerojamiba');
+  const wizardState = db ? await dbGet(DOC.wizardState()) : null;
+  const wizardSummaryHtml = wizardState && wizardState.verdict
+    ? `<div class="card" style="border-color:var(--brass); background:var(--brass-dim);">
+         <div style="font-size:.74rem; text-transform:uppercase; letter-spacing:.03em; color:var(--brass); font-weight:700; margin-bottom:8px;">No vispārīgā vedņa</div>
+         ${wizardBadge(wizardState.verdict)}
+         <div style="margin-top:8px; font-size:.92rem; font-weight:600;">${esc(wizardState.verdictTitle)}</div>
+         <p style="font-size:.85rem; color:var(--ink-soft); margin:6px 0 0;">${esc(wizardState.verdictReason)}</p>
+       </div>`
+    : `<div class="card" style="background:var(--paper);">
+         <p class="hint" style="margin:0;">Vispārīgais vednis vēl nav pabeigts. <span style="text-decoration:underline; cursor:pointer;" id="goto-wizard-link">Iet uz "Vednis" cilni →</span></p>
+       </div>`;
+
+  el.innerHTML = `
+    ${wizardSummaryHtml}
+    <div class="card">
+      <div class="section-title">Specifiskie apstākļi — šī projekta analīze</div>
+      <p class="hint">Šie ir uzņēmumam specifiski apstākļi (nevis vispārīgais vednis), kas var noteikt statusu neatkarīgi no sektora+lieluma testa — piem., darbība kritiskās infrastruktūras tuvumā, loma klientu piegādes ķēdē, u.tml. Pievieno savus punktus.</p>
+      <div id="app-list"></div>
+      <button class="btn ghost edit-only" id="add-basis-btn" style="margin-top:12px;">+ Pievienot apstākli</button>
+    </div>
+  `;
+  document.getElementById('goto-wizard-link')?.addEventListener('click', ()=>{
+    document.querySelector('.tab[data-view="vednis"]').click();
+  });
+  document.getElementById('add-basis-btn')?.addEventListener('click', ()=>addApplicabilityBasis());
+  await seedQuantApplicabilityIfNeeded();
+  const list = document.getElementById('app-list');
+  const bases = db ? await loadApplicabilityBases() : [];
+  if(bases.length === 0){
+    list.innerHTML = `<div class="empty-state">Vēl nav pievienots neviens specifisks apstāklis. Izmanto "+ Pievienot apstākli" vai sāc ar Vedni.</div>`;
+  }
+  bases.forEach(base=>{
+    const status = base.status || 'yellow';
+    const note = base.note || '';
+    const row = document.createElement('div');
+    row.style.cssText = 'border-bottom:1px solid var(--line); padding:16px 0;';
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline; margin-bottom:6px;">
+        <input type="text" data-basen="${base.n}" data-role="title" value="${esc(base.title||'')}" placeholder="Apstākļa nosaukums..." style="font-weight:600; font-size:.95rem; border:none; background:transparent; padding:0; flex:1; min-width:200px;">
+        <input type="text" data-basen="${base.n}" data-role="ref" value="${esc(base.ref||'')}" placeholder="Pants..." class="mono" style="font-size:.76rem; color:var(--grey); border:none; background:transparent; width:160px; text-align:right;">
+      </div>
+      <textarea data-basen="${base.n}" data-role="desc" placeholder="Apraksts..." style="font-size:.87rem; color:var(--ink-soft); margin:0 0 10px; min-height:50px;">${esc(base.desc||'')}</textarea>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+        <div class="seg" data-basen="${base.n}">
+          <button data-v="green" class="${status==='green'?'on':''}">Apstiprināts</button>
+          <button data-v="yellow" class="${status==='yellow'?'on':''}">Iespējams</button>
+          <button data-v="red" class="${status==='red'?'on':''}">Neskaidrs</button>
+        </div>
+        <button class="btn ghost small edit-only delete-basis-btn" data-basen="${base.n}" style="margin-left:auto; color:var(--red); border-color:var(--red);">Dzēst</button>
+      </div>
+      <textarea placeholder="Piezīme / juridiskā konsultācija / atjauninājums..." data-basen="${base.n}" data-role="note" style="font-size:.83rem;">${esc(note)}</textarea>
+      <div class="who">${base._updatedBy ? 'Pēdējo reizi atjaunināja: ' + fmtWho(base._updatedBy, base._updatedAt) : ''}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll('.seg[data-basen] button').forEach(btn=>{
+    const seg = btn.closest('.seg');
+    if(!seg.dataset.basen || seg.querySelector('[data-role]')) return;
+    btn.addEventListener('click', async ()=>{
+      const n = seg.dataset.basen;
+      const v = btn.dataset.v;
+      seg.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      if(db) await dbUpdate(DOC.applicability(n), {status: v, _updatedAt: Date.now(), _updatedBy: myId});
+    });
+  });
+  list.querySelectorAll('input[data-role], textarea[data-role="desc"]').forEach(inp=>{
+    let t;
+    inp.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const n = inp.dataset.basen;
+        const role = inp.dataset.role;
+        if(db) await dbUpdate(DOC.applicability(n), {[role]: inp.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 500);
+    });
+  });
+  list.querySelectorAll('.delete-basis-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('Dzēst šo apstākli?')) return;
+      if(db) await DOC.applicability(btn.dataset.basen).delete();
+      renderPiemerojamiba();
+    });
+  });
+  list.querySelectorAll('textarea[data-role="note"]').forEach(ta=>{
+    let t;
+    ta.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const n = +ta.dataset.basen;
+        if(db) await dbUpdate(DOC.applicability(n), {note: ta.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 600);
+    });
+  });
+}
+
+/* ============================================================
+   VIEW: 03 Aktīvi (asset register) — with AI classification
+   ============================================================ */
+let assetsCache = [];
+
+async function loadAssets(){
+  if(!db) return [];
+  try {
+    const snap = await DOC.assetsCol().orderBy('createdAt','asc').get();
+    return snap.docs.map(d=>({id:d.id, ...d.data()}));
+  } catch(e){ return []; }
+}
+
+async function renderAktivi(){
+  const el = document.getElementById('view-aktivi');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">IKT aktīvu un informācijas sistēmu katalogs</div>
+      <p class="hint">397. not. 31. p. prasība — visu izmantoto sistēmu saraksts. Aprakstot sistēmu, AI var ieteikt tās klasi (A/B/C) — priekšlikums vienmēr jāpārbauda, ne jāpieņem automātiski.</p>
+      <button class="btn edit-only" id="add-asset-btn">+ Pievienot sistēmu</button>
+      <div id="assets-list" style="margin-top:16px;"></div>
+    </div>
+  `;
+  document.getElementById('add-asset-btn').addEventListener('click', ()=>addAssetRow());
+  assetsCache = await loadAssets();
+  const list = document.getElementById('assets-list');
+  if(assetsCache.length === 0){
+    list.innerHTML = `<div class="empty-state">Vēl nav pievienota neviena sistēma. Sāc ar "+ Pievienot sistēmu".</div>`;
+  } else {
+    list.innerHTML = '';
+    assetsCache.forEach(a=>renderAssetCard(a));
+  }
+}
+
+function renderAssetCard(asset){
+  const list = document.getElementById('assets-list');
+  const card = document.createElement('div');
+  card.style.cssText = 'border:1px solid var(--line); background:var(--paper); padding:14px; margin-bottom:10px;';
+  card.dataset.id = asset.id;
+  card.innerHTML = `
+    <div class="grid2">
+      <div class="field"><label>Sistēmas nosaukums</label><input type="text" data-f="name" value="${esc(asset.name||'')}" placeholder="piem., Klientu CRM"></div>
+      <div class="field"><label>Īpašnieks (persona)</label><input type="text" data-f="owner" value="${esc(asset.owner||'')}"></div>
+    </div>
+    <div class="field"><label>Apraksts / funkcija</label><textarea data-f="desc" placeholder="Ko šī sistēma dara, kādus datus tā glabā, kam tā pieejama...">${esc(asset.desc||'')}</textarea></div>
+    <div class="grid3">
+      <div class="field">
+        <label>Klase (A/B/C)</label>
+        <div class="seg" data-f="klase">
+          ${['A','B','C','Nav noteikts'].map(k=>`<button data-v="${k}" class="${asset.klase===k?'on':''}">${k}</button>`).join('')}
+        </div>
+      </div>
+      <div class="field"><label>Piegādātājs</label><input type="text" data-f="supplier" value="${esc(asset.supplier||'')}"></div>
+      <div class="field">
+        <label>Attālinātā piekļuve?</label>
+        <div class="seg" data-f="remote">
+          ${['Jā','Nē','Nezinu'].map(k=>`<button data-v="${k}" class="${asset.remote===k?'on':''}">${k}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="btn ai small ai-classify-btn edit-only">✦ AI: ieteikt klasi</button>
+      <button class="btn ghost small delete-asset-btn edit-only" style="margin-left:auto; color:var(--red); border-color:var(--red);">Dzēst</button>
+    </div>
+    <div class="ai-box" data-role="ai-result"></div>
+    <div class="who">${asset._updatedBy ? 'Pēdējo reizi labots: ' + fmtWho(asset._updatedBy, asset._updatedAt) : ''}</div>
+  `;
+  list.appendChild(card);
+  wireAssetCard(card, asset.id);
+}
+
+function wireAssetCard(card, id){
+  const saveField = async (field, value)=>{
+    if(!db) return;
+    await dbUpdate(DOC.asset(id), {[field]: value, _updatedAt: Date.now(), _updatedBy: myId});
+  };
+  card.querySelectorAll('input[data-f], textarea[data-f]').forEach(inp=>{
+    let t;
+    inp.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(()=>saveField(inp.dataset.f, inp.value), 500);
+    });
+  });
+  card.querySelectorAll('.seg[data-f]').forEach(seg=>{
+    seg.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        seg.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+        btn.classList.add('on');
+        saveField(seg.dataset.f, btn.dataset.v);
+      });
+    });
+  });
+  card.querySelector('.delete-asset-btn').addEventListener('click', async ()=>{
+    if(!confirm('Dzēst šo sistēmu no kataloga?')) return;
+    if(db) await DOC.asset(id).delete();
+    card.remove();
+  });
+  card.querySelector('.ai-classify-btn').addEventListener('click', ()=>runAiClassify(card, id));
+}
+
+async function addAssetRow(){
+  const newId = uid('a');
+  const asset = {name:'', desc:'', owner:'', klase:'', supplier:'', remote:'', createdAt: Date.now()};
+  if(db) await dbSet(DOC.asset(newId), asset);
+  const list = document.getElementById('assets-list');
+  if(list.querySelector('.empty-state')) list.innerHTML = '';
+  renderAssetCard({id:newId, ...asset});
+}
+
+async function runAiClassify(card, id){
+  const box = card.querySelector('[data-role="ai-result"]');
+  const btn = card.querySelector('.ai-classify-btn');
+  const name = card.querySelector('[data-f="name"]').value;
+  const desc = card.querySelector('[data-f="desc"]').value;
+  if(!name && !desc){
+    alert('Vispirms ieraksti sistēmas nosaukumu vai aprakstu.');
+    return;
+  }
+  if(!sample){
+    box.className = 'ai-box show';
+    box.innerHTML = `<div class="lbl">AI nav pieejams</div>Šajā skatā AI palīgs nav ieslēgts.`;
+    return;
+  }
+  btn.disabled = true;
+  box.className = 'ai-box show';
+  box.innerHTML = `<div class="lbl">AI ieteikums</div>Domā...`;
+  const companyContext = await getCompanyContextForAi();
+  const prompt = `Tu palīdzi Latvijas uzņēmumam klasificēt IKT sistēmu pēc MK noteikumu Nr. 397 "Minimālās kiberdrošības prasības" Pielikuma Nr. 5 loģikas (konfidencialitāte / integritāte / pieejamība, klases A/B/C, kur A ir visstingrākā).
+
+Sistēmas nosaukums: ${name || '(nav norādīts)'}
+Apraksts: ${desc || '(nav norādīts)'}
+
+Konteksts par uzņēmumu:
+${companyContext}
+
+Atbildi TIKAI ar JSON šādā formātā, bez papildu teksta:
+{"klase": "A" vai "B" vai "C", "pamatojums": "1-2 teikumi, kāpēc", "brīdinājums": "īss teksts, ka šis ir tikai priekšlikums un jāapstiprina cilvēkam"}`;
+
+  try {
+    const result = await sample.json(prompt, {modelTier:'quick'});
+    if(!result || !['A','B','C'].includes(result.klase)) throw new Error('invalid class from AI');
+    box.innerHTML = `
+      <div class="lbl">AI ieteikums — klase ${result.klase}</div>
+      <p style="margin:0 0 8px;">${esc(result.pamatojums)}</p>
+      <p style="margin:0 0 10px; font-size:.78rem; color:var(--grey); font-style:italic;">${esc(result.brīdinājums || 'Šis ir tikai priekšlikums — apstiprini pats pirms izmantošanas.')}</p>
+      <button class="btn small" id="apply-ai-class">Piemērot klasi ${result.klase}</button>
+    `;
+    box.querySelector('#apply-ai-class').addEventListener('click', ()=>{
+      const seg = card.querySelector('.seg[data-f="klase"]');
+      seg.querySelectorAll('button').forEach(b=>{
+        b.classList.toggle('on', b.dataset.v === result.klase);
+      });
+      if(db) dbUpdate(DOC.asset(id), {klase: result.klase, _updatedAt: Date.now(), _updatedBy: myId});
+    });
+  } catch(e){
+    let msg = 'Neizdevās iegūt ieteikumu.';
+    if(e.code === 'not_granted') msg = 'AI izmantošana šai lapai nav atļauta.';
+    if(e.code === 'rate_limited') msg = 'Pārāk daudz pieprasījumu — mēģini vēlreiz vēlāk.';
+    box.innerHTML = `<div class="lbl">Kļūda</div>${msg}`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ============================================================
+   VIEW: 04 Gap-Assessment
+   ============================================================ */
+let controlsCache = {};
+let selectedCat = null;
+
+async function loadControls(){
+  const out = {};
+  CONTROLS.forEach(c=> out[c.id] = {compliance:null, maturity:null, note:''});
+  if(!db) return out;
+  for(const c of CONTROLS){
+    const data = await dbGet(DOC.control(c.id));
+    if(data) out[c.id] = {compliance: data.compliance ?? null, maturity: data.maturity ?? null, note: data.note ?? '', evidence: data.evidence ?? '', evDate: data.evDate ?? '', evOwner: data.evOwner ?? '', _updatedBy:data._updatedBy, _updatedAt:data._updatedAt};
+  }
+  return out;
+}
+
+function catStats(catCode){
+  const ctls = CONTROLS.filter(c=>c.cat===catCode);
+  let sum=0, count=0, gaps=0;
+  ctls.forEach(c=>{
+    const s = controlsCache[c.id];
+    if(!s || s.compliance === 'N/A') return;
+    if(s.compliance == null && s.maturity == null) return;
+    count++;
+    sum += (s.maturity ?? 0);
+    if(s.compliance === 'Nē') gaps++;
+  });
+  const avg = count>0 ? sum/count : null;
+  return {avg, gaps, count};
+}
+function heatColor(avg){
+  if(avg===null) return 'var(--line)';
+  if(avg < 2) return 'var(--red)';
+  if(avg < 3.5) return 'var(--orange)';
+  return 'var(--green)';
+}
+
+async function renderGap(){
+  const el = document.getElementById('view-gap');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Gap-Assessment: Art. 21 × MK not. Nr. 397</div>
+      <p class="hint">Izvēlies kategoriju, lai redzētu un aizpildītu konkrētās prasības. AI var uzrakstīt politikas melnrakstu balstoties uz to, kas jau ievadīts.</p>
+      <div class="ev-summary" id="ev-summary" role="group" aria-label="Aizpildīšana un pierādījumi"></div>
+      <p class="ev-note">Aizpildīts nenozīmē atbilstošs. Punkts ir pierādīts tikai tad, ja norādīts dokuments un pārbaudes datums.</p>
+      <div class="heatgrid" id="heatgrid"></div>
+      <div id="controls-area"></div>
+    </div>
+  `;
+  controlsCache = await loadControls();
+  renderHeatgrid();
+  renderControlsPanel();
+}
+
+function renderHeatgrid(){
+  const grid = document.getElementById('heatgrid');
+  grid.innerHTML = '';
+  renderEvidenceSummary();
+  CATEGORIES.forEach(cat=>{
+    const stats = catStats(cat.code);
+    const cell = document.createElement('div');
+    cell.className = 'heatcell' + (selectedCat===cat.code?' sel':'');
+    const pct = stats.avg===null ? 0 : stats.avg/5*100;
+    cell.innerHTML = `
+      <div class="cn">${cat.code}) ${cat.name}</div>
+      <div class="num" style="color:${heatColor(stats.avg)}">${stats.avg===null?'—':stats.avg.toFixed(1)}</div>
+      <div class="bar"><i style="width:${pct}%; background:${heatColor(stats.avg)}"></i></div>
+      ${stats.gaps>0 ? `<div style="font-size:.7rem; color:var(--red); margin-top:6px; font-weight:600;">${stats.gaps} obligāta neatbilstība</div>` : ''}
+    `;
+    cell.addEventListener('click', ()=>{ selectedCat = cat.code; renderHeatgrid(); renderControlsPanel(); });
+    grid.appendChild(cell);
+  });
+}
+
+function renderControlsPanel(){
+  const area = document.getElementById('controls-area');
+  if(!selectedCat){
+    area.innerHTML = `<p style="color:var(--grey); font-size:.88rem;">Izvēlies kategoriju augstāk.</p>`;
+    return;
+  }
+  const cat = CATEGORIES.find(c=>c.code===selectedCat);
+  const ctls = CONTROLS.filter(c=>c.cat===selectedCat);
+  area.innerHTML = `
+    <div style="border:1px solid var(--line); margin-top:6px;">
+      <div style="padding:12px 16px; background:var(--paper-dim); border-bottom:1px solid var(--line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <strong>${cat.code}) ${cat.name}</strong>
+        <button class="btn ai small edit-only" id="ai-policy-draft-btn">✦ AI: uzraksti politikas melnrakstu šai kategorijai</button>
+      </div>
+      <div id="ai-policy-box" class="ai-box" style="margin:0; border:none; border-bottom:1px solid var(--brass);"></div>
+      <div id="ctl-rows"></div>
+    </div>
+  `;
+  const rows = document.getElementById('ctl-rows');
+  ctls.forEach(c=>{
+    const s = controlsCache[c.id] || {compliance:null, maturity:null, note:''};
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:14px 16px; border-bottom:1px solid var(--line);';
+    row.innerHTML = `
+      <div style="font-size:.88rem; margin-bottom:8px;">${c.text} <span class="mono" style="font-size:.74rem; color:var(--grey); display:block; margin-top:2px;">${c.ref}</span></div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-bottom:8px;">
+        <div class="seg" data-cid="${c.id}" data-role="compliance">
+          ${['Jā','Daļēji','Nē','N/A'].map(v=>`<button data-v="${v}" class="${s.compliance===v?'on':''}">${v}</button>`).join('')}
+        </div>
+        <div class="mat-row" data-cid="${c.id}" data-role="maturity">
+          ${[0,1,2,3,4,5].map(n=>`<div class="mat-dot ${s.maturity===n?'on':''}" data-v="${n}" title="${MAT_LABELS[n]}">${n}</div>`).join('')}
+        </div>
+      </div>
+      <input type="text" data-cid="${c.id}" data-role="note" placeholder="Piezīme..." value="${esc(s.note||'')}" style="font-size:.82rem;">
+      <div class="ev-row">
+        <span class="badge ${evBadgeClass(s)}" data-role="ev-badge" data-cid="${c.id}">${evBadgeText(s)}</span>
+        <input type="text" data-cid="${c.id}" data-role="evidence" placeholder="Pierādījums: dokuments, ekrānuzņēmums, saite" value="${esc(s.evidence||'')}">
+        <input type="date" data-cid="${c.id}" data-role="evDate" value="${esc(s.evDate||'')}" aria-label="Pārbaudes datums">
+        <input type="text" data-cid="${c.id}" data-role="evOwner" placeholder="Pārbaudīja (vārds)" value="${esc(s.evOwner||'')}">
+      </div>
+      <div class="who">${s._updatedBy ? fmtWho(s._updatedBy, s._updatedAt) : ''}</div>
+    `;
+    rows.appendChild(row);
+  });
+
+  rows.querySelectorAll('.seg[data-role="compliance"] button').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const cid = btn.closest('.seg').dataset.cid;
+      btn.closest('.seg').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      controlsCache[cid] = {...controlsCache[cid], compliance: btn.dataset.v}; refreshEvBadge(cid);
+      if(db) await dbUpdate(DOC.control(cid), {compliance: btn.dataset.v, _updatedAt: Date.now(), _updatedBy: myId});
+      renderHeatgrid();
+    });
+  });
+  rows.querySelectorAll('.mat-row[data-role="maturity"] .mat-dot').forEach(dot=>{
+    dot.addEventListener('click', async ()=>{
+      const cid = dot.closest('.mat-row').dataset.cid;
+      dot.closest('.mat-row').querySelectorAll('.mat-dot').forEach(d=>d.classList.remove('on'));
+      dot.classList.add('on');
+      const v = +dot.dataset.v;
+      controlsCache[cid] = {...controlsCache[cid], maturity: v};
+      if(db) await dbUpdate(DOC.control(cid), {maturity: v, _updatedAt: Date.now(), _updatedBy: myId});
+      renderHeatgrid();
+    });
+  });
+  rows.querySelectorAll('input[data-role="note"], input[data-role="evidence"], input[data-role="evDate"], input[data-role="evOwner"]').forEach(inp=>{
+    let t;
+    inp.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const cid = inp.dataset.cid;
+        const role = inp.dataset.role; controlsCache[cid] = {...controlsCache[cid], [role]: inp.value}; refreshEvBadge(cid);
+        if(db) await dbUpdate(DOC.control(cid), {[role]: inp.value, _updatedAt: Date.now(), _updatedBy: myId}); renderHeatgrid();
+      }, 600);
+    });
+  });
+
+  document.getElementById('ai-policy-draft-btn').addEventListener('click', ()=>runAiPolicyDraft(cat, ctls));
+}
+
+async function runAiPolicyDraft(cat, ctls){
+  const box = document.getElementById('ai-policy-box');
+  if(!sample){
+    box.className = 'ai-box show';
+    box.innerHTML = `<div class="lbl">AI nav pieejams</div>Šajā skatā AI palīgs nav ieslēgts.`;
+    return;
+  }
+  box.className = 'ai-box show';
+  box.innerHTML = `<div class="lbl">AI raksta melnrakstu</div>Domā...`;
+
+  const statusLines = ctls.map(c=>{
+    const s = controlsCache[c.id] || {};
+    return `- ${c.text} (atbilstība: ${s.compliance || 'nav norādīts'}, briedums: ${s.maturity ?? 'nav norādīts'})`;
+  }).join('\n');
+
+  const companyContext = await getCompanyContextForAi();
+  const prompt = `Tu palīdzi Latvijas uzņēmumam sagatavot iekšējas politikas melnrakstu kategorijai "${cat.name}" saskaņā ar MK noteikumiem Nr. 397 "Minimālās kiberdrošības prasības".
+
+Konteksts par uzņēmumu:
+${companyContext}
+
+Pašreizējais stāvoklis pēc pašnovērtējuma:
+${statusLines}
+
+Uzraksti īsu (200-350 vārdu) iekšējās politikas melnrakstu latviešu valodā šai kategorijai, kas:
+- ir piemērots uzņēmuma reālajam lielumam un nozarei (sk. kontekstu augstāk), nevis vispārīgs liela korporācijas šablons
+- ņem vērā, ka daži punkti jau ir vai nav ieviesti (sk. augstāk)
+- ir formulēts kā sākumpunkts turpmākai rediģēšanai, nevis gatavs juridisks dokuments
+- beidzas ar īsu piezīmi, ka melnraksts jāpārskata ar juristu vai atbildīgo personu pirms apstiprināšanas
+
+Atbildi TIKAI ar pašu melnrakstu, bez ievada frāzēm.`;
+
+  try {
+    const result = await sample(prompt, {modelTier:'default', onText:({text})=>{
+      box.innerHTML = `<div class="lbl">AI melnraksts</div><div style="white-space:pre-wrap; font-size:.85rem; line-height:1.6;">${esc(text)}</div>`;
+    }});
+    box.innerHTML += `<div style="margin-top:10px; font-size:.76rem; color:var(--grey); font-style:italic;">Šis ir AI ģenerēts melnraksts sākumam — obligāti jāpārskata ar atbildīgo personu vai juristu pirms izmantošanas.</div>`;
+  } catch(e){
+    let msg = 'Neizdevās izveidot melnrakstu.';
+    if(e.code === 'not_granted') msg = 'AI izmantošana šai lapai nav atļauta.';
+    if(e.code === 'rate_limited') msg = 'Pārāk daudz pieprasījumu — mēģini vēlreiz vēlāk.';
+    box.innerHTML = `<div class="lbl">Kļūda</div>${msg}`;
+  }
+}
+
+/* ============================================================
+   VIEW: Kalendārs (obligation deadlines, computed from base date)
+   ============================================================ */
+const DEADLINE_RULES = [
+  {key:'nkdc', label:'Paziņot NKDC par statusu', baseKey:'statusDate', days:30, ref:'NKDL 22. p.', note:'1 mēnesis kalendāra dienās (aptuveni)'},
+  {key:'manager', label:'Iecelt kiberdrošības vadītāju', baseKey:'nkdcNotifiedDate', days:90, ref:'NKDL 25. p.', note:'3 mēneši no paziņojuma NKDC'},
+  {key:'managerNotify', label:'Paziņot NKDC/SAB par vadītāju', baseKey:'managerAppointedDate', days:7, ref:'397. not. 10. p.', note:'5 darba dienas (šeit rēķinātas kā ~7 kalendāra dienas — pārbaudi precīzi)'},
+  {key:'selfAssessment', label:'Pirmā pašnovērtēšana', baseKey:'statusDate', days:90, ref:'397. not. 142.-143. p.', note:'3 mēneši no statusa, vai līdz 1. oktobrim — atkarīgs no datuma'},
+];
+
+async function loadCalendarBase(){
+  if(!db) return {};
+  const data = await dbGet(DOC.calendarBase());
+  return data || {};
+}
+
+function addDays(dateStr, days){
+  if(!dateStr) return null;
+  const d = new Date(dateStr + 'T00:00:00');
+  if(isNaN(d)) return null;
+  d.setDate(d.getDate() + days);
+  return d;
+}
+function fmtDate(d){
+  if(!d) return '—';
+  return d.toLocaleDateString('lv-LV', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+async function renderKalendars(){
+  const el = document.getElementById('view-kalendars');
+  const base = await loadCalendarBase();
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Pienākumu kalendārs</div>
+      <p class="hint">Ievadi bāzes datumus — termiņi aprēķinās automātiski. Šie ir orientējoši aprēķini (kalendāra dienās); precīziem darba dienu termiņiem pārbaudi ar kalendāru.</p>
+      <div class="grid3 edit-only" style="margin-bottom:20px;">
+        <div class="field"><label>Statusa apstiprināšanas datums</label><input type="date" data-basekey="statusDate" value="${esc(base.statusDate||'')}"></div>
+        <div class="field"><label>NKDC paziņojuma datums</label><input type="date" data-basekey="nkdcNotifiedDate" value="${esc(base.nkdcNotifiedDate||'')}"></div>
+        <div class="field"><label>Vadītāja iecelšanas datums</label><input type="date" data-basekey="managerAppointedDate" value="${esc(base.managerAppointedDate||'')}"></div>
+      </div>
+      <table>
+        <thead><tr><th>Pienākums</th><th>Bāzes datums</th><th>Termiņš</th><th>Statuss</th><th>Pants</th></tr></thead>
+        <tbody id="cal-tbody"></tbody>
+      </table>
+      <p class="hint" style="margin-top:16px;">Precīzu darba dienu (nevis kalendāra dienu) aprēķinu ieteicams pārbaudīt atsevišķi svētku dienu dēļ.</p>
+    </div>
+  `;
+  renderCalendarRows(base);
+
+  el.querySelectorAll('input[data-basekey]').forEach(inp=>{
+    inp.addEventListener('change', async ()=>{
+      const key = inp.dataset.basekey;
+      const newBase = {...base, [key]: inp.value, _updatedAt: Date.now(), _updatedBy: myId};
+      if(db) await dbUpdate(DOC.calendarBase(), newBase);
+      Object.assign(base, newBase);
+      renderCalendarRows(base);
+    });
+  });
+}
+
+function renderCalendarRows(base){
+  const tbody = document.getElementById('cal-tbody');
+  tbody.innerHTML = '';
+  const today = new Date();
+  DEADLINE_RULES.forEach(rule=>{
+    const baseDate = base[rule.baseKey];
+    const deadline = baseDate ? addDays(baseDate, rule.days) : null;
+    let statusBadgeHtml = `<span class="badge grey">Nav bāzes datuma</span>`;
+    if(deadline){
+      const diffDays = Math.round((deadline - today) / (1000*60*60*24));
+      if(diffDays < 0) statusBadgeHtml = `<span class="badge red">Termiņš pagājis (${Math.abs(diffDays)} d.)</span>`;
+      else if(diffDays <= 14) statusBadgeHtml = `<span class="badge orange">Tuvojas (${diffDays} d.)</span>`;
+      else statusBadgeHtml = `<span class="badge green">${diffDays} d. atlicis</span>`;
+    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${rule.label}<div style="font-size:.74rem; color:var(--grey); margin-top:2px;">${rule.note}</div></td>
+      <td>${baseDate ? fmtDate(new Date(baseDate+'T00:00:00')) : '—'}</td>
+      <td><strong>${deadline ? fmtDate(deadline) : '—'}</strong></td>
+      <td>${statusBadgeHtml}</td>
+      <td class="mono" style="font-size:.76rem; color:var(--grey);">${rule.ref}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ============================================================
+   VIEW: Ceļvedis (project roadmap — 5 phases, reads live status from other tabs)
+   ============================================================ */
+const PROJECT_PHASES = [
+  {n:0, code:'F0', title:'Mandāts', subtitle:'Lēmums sākt projektu',
+   desc:'Vadības lēmums par projekta apjomu, budžetu un atbildīgo personu.'},
+  {n:1, code:'F1', title:'Novērtējums', subtitle:'Piemērojamība, aktīvi, robi',
+   desc:'Statusa noteikšana, IKT aktīvu uzskaite, atbilstības robu identificēšana — Vednis, Aktīvi, Gap-Assessment cilnes.'},
+  {n:2, code:'F2', title:'Projektēšana', subtitle:'Politikas un arhitektūra',
+   desc:'Četru obligāto dokumentu izstrāde (politika, katalogs, nepārtrauktības plāns, incidentu žurnāls) un tehniskā arhitektūra.'},
+  {n:3, code:'F3', title:'Ieviešana', subtitle:'Tehniskās pārbaudes un pasākumi',
+   desc:'Reālu kontroles pasākumu ieviešana — MFA, segmentācija, šifrēšana — un to pārbaude ar tehniskiem rīkiem.'},
+  {n:4, code:'F4', title:'Apmācība & Tests', subtitle:'Cilvēki un gatavība',
+   desc:'Darbinieku apmācība (izmantojot Mācību centru), fišinga simulācijas, galda mācības par incidentu reaģēšanu.'},
+  {n:5, code:'F5', title:'Uzturēšana', subtitle:'Ilgtermiņa process',
+   desc:'Ikgadēja pašnovērtēšana, likumdošanas izmaiņu sekošana, gatavība NKDC pārbaudei.'},
+];
+
+async function computePhaseProgress(){
+  // Phase 0: mandate — proxied by whether pase.atbildigais is filled
+  const pase = db ? await dbGet(DOC.pase()) : null;
+  const p0 = pase?.atbildigais ? 100 : (pase?.uznemums ? 40 : 0);
+
+  // Phase 1: assessment — wizard done + assets count + gap filled ratio
+  const wizardState = db ? await dbGet(DOC.wizardState()) : null;
+  const wizardDone = wizardState?.verdict ? 1 : 0;
+  const assets = db ? await loadAssets() : [];
+  const assetsScore = Math.min(assets.length / 5, 1); // assume ~5 assets is "reasonable coverage" for a first pass
+  controlsCache = await loadControls();
+  const filledControls = CONTROLS.filter(c=>{
+    const s = controlsCache[c.id];
+    return s && (s.compliance || s.maturity !== null);
+  }).length;
+  const gapScore = filledControls / CONTROLS.length;
+  const p1 = Math.round(((wizardDone + assetsScore + gapScore) / 3) * 100);
+
+  // Phase 2: policies — placeholder, becomes real once Politikas tab exists
+  const policiesData = db ? await dbGet(DOC.policiesStatus()) : null;
+  const p2 = policiesData?.progress ?? 0;
+
+  // Phase 3: technical checks — placeholder, becomes real once Tehniskās pārbaudes tab exists
+  const techData = db ? await dbGet(DOC.techStatus()) : null;
+  const p3 = techData?.progress ?? 0;
+
+  // Phase 4: training — placeholder
+  const trainingData = db ? await dbGet(DOC.trainingStatus()) : null;
+  const p4 = trainingData?.progress ?? 0;
+
+  // Phase 5: maintenance — placeholder, becomes real once first annual cycle completes
+  const p5 = 0;
+
+  return [p0, p1, p2, p3, p4, p5];
+}
+
+function phaseStatusLabel(pct){
+  if(pct === 0) return {cls:'grey', label:'Nav sākts'};
+  if(pct < 100) return {cls:'orange', label:`${pct}% aizpildīts`};
+  return {cls:'green', label:'Aizpildīts'};
+}
+
+async function renderCelvedis(){
+  const el = document.getElementById('view-celvedis');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">QUANT NIS2 & Kiberdrošības Programma</div>
+      <p class="hint">Pilna projekta ceļvedis — no mandāta līdz ilgtermiņa uzturēšanai. Progress katrā fāzē aprēķināts no reāliem datiem citās cilnēs.</p>
+      <div id="phase-grid"></div>
+    </div>
+  `;
+  const progress = await computePhaseProgress();
+  const grid = document.getElementById('phase-grid');
+  PROJECT_PHASES.forEach((phase, idx)=>{
+    const pct = progress[idx];
+    const status = phaseStatusLabel(pct);
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; gap:16px; padding:18px 0; border-bottom:1px solid var(--line); align-items:flex-start;';
+    row.innerHTML = `
+      <div style="flex-shrink:0; width:52px; height:52px; border:1.5px solid ${pct===100?'var(--green)':pct>0?'var(--brass)':'var(--line)'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono'; font-weight:600; font-size:.85rem; color:${pct===100?'var(--green)':pct>0?'var(--brass)':'var(--grey)'};">
+        ${phase.code}
+      </div>
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:4px;">
+          <strong style="font-size:1rem;">${phase.title}</strong>
+          <span class="badge ${status.cls}">${status.label}</span>
+        </div>
+        <div style="font-size:.82rem; color:var(--brass); font-weight:600; margin-bottom:6px;">${phase.subtitle}</div>
+        <p style="font-size:.86rem; color:var(--ink-soft); margin:0 0 10px; line-height:1.5;">${phase.desc}</p>
+        <div class="bar" style="background:var(--line); height:5px; position:relative; overflow:hidden; max-width:320px;">
+          <i style="position:absolute; left:0; top:0; bottom:0; width:${pct}%; background:${pct===100?'var(--green)':'var(--brass)'};"></i>
+        </div>
+      </div>
+    `;
+    grid.appendChild(row);
+  });
+
+  const note = document.createElement('p');
+  note.className = 'hint';
+  note.style.marginTop = '18px';
+  const evs = evidenceStats();
+  note.innerHTML = 'Progress ir <strong>aizpildīšanas rādītājs</strong>, nevis atbilstības apliecinājums. Kontroles punkti: aizpildīti ' + evs.filled + ' no ' + evs.applicable + ', ar pierādījumu ' + evs.evidenced + ', nav apstiprināti ' + evs.unconfirmed + '.';
+  el.querySelector('.card').appendChild(note);
+
+  await renderReadinessGenerator(progress);
+}
+
+/* ------------------------------------------------------------
+   Readiness statement generator — builds text from REAL progress
+   numbers, not from a static template, so the claim can never be
+   ahead of the actual state recorded elsewhere in the tool.
+   ------------------------------------------------------------ */
+async function renderReadinessGenerator(progress){
+  const el = document.getElementById('view-celvedis');
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="section-title">Gatavības apliecinājuma ģenerators</div>
+    <p class="hint">Izmantošanai tenderu dokumentos vai komerciālajos piedāvājumos. Teksts tiek veidots no reālā progresa citās cilnēs — tas nevar apgalvot vairāk, nekā instrumentā faktiski ir ievadīts.</p>
+    <button class="btn edit-only" id="gen-readiness-btn">Ģenerēt apliecinājumu</button>
+    <div id="readiness-output" style="margin-top:16px;"></div>
+  `;
+  el.appendChild(card);
+  document.getElementById('gen-readiness-btn').addEventListener('click', ()=>generateReadinessStatement(progress));
+}
+
+async function generateReadinessStatement(progress){
+  const out = document.getElementById('readiness-output');
+  out.innerHTML = `<p class="hint">Apkopo datus...</p>`;
+
+  const pase = db ? await dbGet(DOC.pase()) : null;
+  const companyName = pase?.uznemums || '[Uzņēmuma nosaukums — aizpildi "Pase" cilnē]';
+  const sectorPhrase = pase?.nozare ? ` (${pase.nozare})` : '';
+
+  const p1 = progress[1]; // assessment
+  const p2 = progress[2]; // policies
+  const p3 = progress[3]; // technical checks
+  const p4 = progress[4]; // training
+
+  // gather concrete numbers to back the claim
+  const assets = db ? await loadAssets() : [];
+  controlsCache = await loadControls();
+  const filledControls = CONTROLS.filter(c=>{
+    const s = controlsCache[c.id];
+    return s && (s.compliance || s.maturity !== null);
+  }).length;
+  techChecksCache = await loadTechChecks();
+  const techDone = TECH_CHECKS.filter(t=>{ const s = techChecksCache[t.id]; return (s.status === 'Veikts — OK' || s.status === 'Veikts — problēmas') && s.result && s.date; }).length;
+  trainingCache = await loadTraining();
+  const trainingDone = TRAINING_MODULES.filter(t=>trainingCache[t.id].status === 'Pabeigts').length;
+  policiesCache = await loadPolicies();
+  const policiesApproved = REQUIRED_POLICIES.filter(p=>policiesCache[p.id].status === 'Apstiprināts').length;
+
+  // determine honest level: based on confirmed evidence, not on filled-in fields
+  const st = evidenceStats();
+  const filledShare = st.applicable ? st.filled / st.applicable : 0;
+  const evShare = st.applicable ? st.evidenced / st.applicable : 0;
+  const disclaimer = '\n\nŠis apliecinājums balstīts uz uzņēmuma pašnovērtējumu un norādītajiem pierādījumiem. Tas nav neatkarīgs audits, juridisks atzinums vai NKDC lēmums.';
+  const respLine = pase?.atbildigais ? 'Uzņēmumā ir noteikta atbildīgā persona par kiberdrošības jautājumiem.' : '';
+  let level, levelLabel, text;
+
+  if(filledShare < 0.5){
+    level = 0;
+    levelLabel = 'Līmenis 0 — Apzināšanās';
+    text = `${companyName}${sectorPhrase} apzinās, ka Eiropas Savienības NIS2 direktīva un tās Latvijas ieviešana (Nacionālās kiberdrošības likums, MK noteikumi Nr. 397) var skart uzņēmuma darbības jomu.\n\nMēs esam veikuši sākotnēju piemērojamības izvērtējumu un strādājam pie atbilstības nodrošināšanas, izmantojot strukturētu iekšējo procesu.` + disclaimer;
+  } else if(evShare < 0.6 || policiesApproved < REQUIRED_POLICIES.length || techDone < 2){
+    level = 1;
+    levelLabel = 'Līmenis 1 — Strukturēts pašnovērtējums';
+    text = `${companyName} ir veikusi pašnovērtējumu pret MK noteikumu Nr. 397 prasībām, aptverot ${assets.length} IKT sistēmas un ${st.filled} no ${st.applicable} kontroles punktiem 10 kategorijās. Ar dokumentāru pierādījumu apstiprināti: ${st.evidenced}. ${respLine}\n\nPašnovērtējuma rezultātā sagatavots prioritizēts rīcības plāns galveno drošības pasākumu ieviešanai.` + disclaimer;
+  } else {
+    level = 2;
+    levelLabel = 'Līmenis 2 — Dokumentēti pasākumi';
+    text = `${companyName} ir dokumentējusi šādus kiberdrošības pasākumus:\n- Pašnovērtējums: ${st.filled} no ${st.applicable} kontroles punktiem, no tiem ar dokumentāru pierādījumu: ${st.evidenced}\n- ${policiesApproved} no ${REQUIRED_POLICIES.length} obligātajiem dokumentiem apstiprināti vadībā\n- ${techDone} no ${TECH_CHECKS.length} tehniskajām pārbaudēm veiktas un dokumentētas\n- ${trainingDone} no ${TRAINING_MODULES.length} apmācību moduļiem pabeigti\n\nPierādījumi pieejami pēc pieprasījuma.` + disclaimer;
+  }
+  const today = new Date().toLocaleDateString('lv-LV');
+  out.innerHTML = `
+    <div class="badge ${level===0?'grey':level===1?'orange':'green'}" style="margin-bottom:10px;">${levelLabel}</div>
+    <div style="border:1px solid var(--line); background:var(--paper); padding:16px; font-size:.87rem; line-height:1.6; white-space:pre-wrap;">${esc(text)}</div>
+    <p style="font-size:.74rem; color:var(--grey); margin-top:10px;">Ģenerēts: ${today} · Balstīts uz instrumentā ievadītajiem datiem šajā brīdī. Pirms izmantošanas pārbaudiet aktualitāti un pierādījumus.</p>
+    <button class="btn ghost small edit-only" id="copy-readiness-btn" style="margin-top:8px;">Kopēt tekstu</button>
+  `;
+  document.getElementById('copy-readiness-btn')?.addEventListener('click', ()=>{
+    navigator.clipboard?.writeText(text).then(()=>{
+      const btn = document.getElementById('copy-readiness-btn');
+      const orig = btn.textContent;
+      btn.textContent = 'Nokopēts ✓';
+      setTimeout(()=>{ btn.textContent = orig; }, 1500);
+    });
+  });
+}
+
+/* ============================================================
+   VIEW: Vednis (applicability wizard) — ported from prototype step 4
+   ============================================================ */
+const WIZARD_STEPS = [
+  {id:'A1', kicker:'Jurisdikcija · 1/9', title:'Kur organizācija ir reģistrēta?',
+   why:'NKDL nosaka, ka likums piemērojams organizācijām, kas reģistrētas Latvijā, vai ārpus ES reģistrētiem subjektiem ar pārstāvi Latvijā.', ref:'NKDL 3. p.',
+   opts:[
+     {t:'Latvijā', next:'B1'},
+     {t:'Citā ES dalībvalstī', next:'A2'},
+     {t:'Ārpus ES, ir pārstāvis Latvijā', next:'A3'},
+     {t:'Ārpus ES, pārstāvja Latvijā nav', next:null, out:{verdict:'out', title:'Ārpus tvēruma', reason:'Organizācijas bez pārstāvja Latvijā, kas reģistrētas ārpus ES, likuma tvērumā neietilpst.', ref:'NKDL 3. p. 7. d.'}}
+   ]},
+  {id:'A2', kicker:'Jurisdikcija · 2/9', title:'Vai Latvijā sniedzat tikai digitālos pakalpojumus (DNS/TLD, mākonis, CDN, tirdzniecības vieta u.tml.) un jums nav cita veida pakalpojumu vai IKT kritiskās infrastruktūras šeit?',
+   why:'Digitālo pakalpojumu sniedzējiem ES ietvaros var piemērot tikai vienas dalībvalsts uzraudzību.', ref:'NKDL 3. p. 6., 8. d.',
+   opts:[
+     {t:'Jā, tikai digitālie pakalpojumi', next:'A3'},
+     {t:'Nē, ir arī cita veida darbība Latvijā', next:'B1'}
+   ]},
+  {id:'A3', kicker:'Jurisdikcija · 3/9', title:'Kur tiek pieņemti galvenie lēmumi par kiberrisku pārvaldību?',
+   why:'Nosaka, kuras valsts uzraudzības iestāde ir kompetenta.', ref:'NKDL 3. p. 6., 8. d.',
+   opts:[
+     {t:'Latvijā', next:'B1'},
+     {t:'Citā ES dalībvalstī', next:null, out:{verdict:'out-lv', title:'Uzraudzība citā ES valstī', reason:'Ja galvenie lēmumi par kiberrisku pārvaldību tiek pieņemti citā ES dalībvalstī, uzraudzība notiek tur.', ref:'NKDL 3. p. 6. d.'}},
+     {t:'Nezinu', next:null, out:{verdict:'unclear', title:'Nepieciešams noskaidrot', reason:'Bez skaidrības par lēmumu pieņemšanas vietu nav iespējams noteikt piemērojamo jurisdikciju.', ref:'NKDL 3. p. 6., 8. d.'}}
+   ]},
+  {id:'B1', kicker:'Organizācijas veids · 4/9', title:'Kāds ir jūsu organizācijas veids?',
+   why:'Dažām publiskā sektora organizācijām statuss "būtisks" tiek piešķirts neatkarīgi no nozares vai lieluma.', ref:'NKDL 20. p. 5.–7., 10. d.',
+   opts:[
+     {t:'Tiešās pārvaldes vai cita valsts iestāde', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Valsts tiešās pārvaldes un citas valsts iestādes ir būtiski pakalpojumu sniedzēji neatkarīgi no lieluma.', ref:'NKDL 20. p. 5. d.'}},
+     {t:'Atvasināta publiska persona (t.sk. pašvaldība)', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Atvasinātas publiskas personas ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 6. d.'}},
+     {t:'Publisks elektroniskais plašsaziņas līdzeklis', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Publiskie elektroniskie plašsaziņas līdzekļi ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 7. d.'}},
+     {t:'Pastarpinātās pārvaldes iestāde', next:'D1'},
+     {t:'Privāts uzņēmums / pašnodarbinātais', next:'C1'}
+   ]},
+  {id:'C1', kicker:'Īpašās kategorijas · 5/9', title:'Vai sniedzat kādu no šiem pakalpojumiem?', sub:'Šīm kategorijām statuss noteikts neatkarīgi no uzņēmuma lieluma.',
+   why:'Likums šīm darbībām piešķir īpašu statusu bez lieluma testa.', ref:'NKDL 20. p. 1.–4. d., 21. p. 1. d. 5., 6. pk.',
+   opts:[
+     {t:'TLD reģistrs / DNS pakalpojumi', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'TLD reģistri un DNS pakalpojumu sniedzēji ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 1.-2. d.'}},
+     {t:'Elektronisko sakaru komersants', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Elektronisko sakaru komersanti ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 3. d.'}},
+     {t:'Kvalificēts uzticamības pakalpojumu sniedzējs', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Kvalificēti uzticamības pakalpojumu sniedzēji ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 4. d.'}},
+     {t:'Nekvalificēts uzticamības pakalpojumu sniedzējs / izglītības IS', next:null, out:{verdict:'important', title:'Svarīga pakalpojuma sniedzējs', reason:'Nekvalificēti uzticamības pakalpojumu sniedzēji un izglītības informācijas sistēmu nodrošinātāji ir svarīgi pakalpojumu sniedzēji.', ref:'NKDL 21. p. 1. d. 5.-6. pk.'}},
+     {t:'Nekas no minētā', next:'D1'}
+   ]},
+  {id:'D1', kicker:'Nozare · 6/9', title:'Kurā nozaru grupā darbojas organizācija?',
+   why:'Likuma pielikumi nosaka divas nozaru grupas ar dažādu lieluma slieksni.', ref:'NKDL 20. p. 8. d., 21. p. 1. d. 1.–2. pk.',
+   opts:[
+     {t:'Enerģētika, transports, banku, veselības, ūdens, digitālā infrastruktūra, kosmoss (grupa "E")', next:'D2', tag:'E'},
+     {t:'Pasts, ķīmija, pārtika, ražošana, tiešsaistes tirgi, pētniecība, apsardze (grupa "I")', next:'D2', tag:'I'},
+     {t:'Nekas no minētā', next:'D3', tag:'none'}
+   ]},
+  {id:'D2', kicker:'Lielums · 7/9', title:'Kāds ir organizācijas lielums?', sub:'Balstoties uz pēdējo pārskata gadu.',
+   why:'"E" grupas nozarēs lielie ir būtiski, vidējie — svarīgi. "I" grupas nozarēs gan vidējie, gan lielie ir svarīgi.', ref:'NKDL 1. p. 16., 25. d.',
+   opts:[
+     {t:'Liels (≥250 darbinieku VAI apgrozījums >50M€ VAI bilance >43M€)', next:'D3', tag:'large'},
+     {t:'Vidējs (≤249 darbinieku UN apgrozījums 10–50M€ vai bilance 10–43M€)', next:'D3', tag:'medium'},
+     {t:'Mazs', next:'D3', tag:'small'}
+   ]},
+  {id:'D3', kicker:'Papildu kritēriji · 8/9', title:'Vai esat vienīgais šāda veida pakalpojuma sniedzējs Latvijā?',
+   why:'Vienīgajam pakalpojuma sniedzējam nozarē statuss piemērojams neatkarīgi no lieluma.', ref:'NKDL 20. p. 9. d., 21. p. 1. d. 3. pk.',
+   opts:[
+     {t:'Jā', next:'D4'},
+     {t:'Nē / nezinu', next:'D4'}
+   ]},
+  {id:'D4', kicker:'Nozīmīgums · 9/9', title:'Vai jūsu darbības traucējums varētu būtiski ietekmēt sabiedrisko drošību, aizsardzību vai veselību, vai radīt sistēmisku risku?',
+   why:'Šis kritērijs var piešķirt būtiska pakalpojuma sniedzēja statusu neatkarīgi no nozares vai lieluma. No 01.10.2026 tas skaidri attiecas arī uz nacionālajai drošībai nozīmīgām komercsabiedrībām.', ref:'NKDL 20. p. 11. d.',
+   opts:[
+     {t:'Jā', next:null, out:{verdict:'essential-safety', title:'Iespējams būtisks statuss (nozīmīguma kritērijs)', reason:'Organizācijas, kuru darbības traucējums var būtiski ietekmēt sabiedrisko drošību, aizsardzību, veselību vai radīt sistēmisku risku, ir būtiski pakalpojumu sniedzēji neatkarīgi no lieluma vai nozares.', ref:'NKDL 20. p. 11. d.'}},
+     {t:'Nē', next:null, out:{verdict:'final'}},
+     {t:'Nezinu', next:null, out:{verdict:'essential-safety-unclear', title:'Nepieciešams precizēt', reason:'Nozīmīguma kritērijs prasa organizācijas pašai izvērtēt ietekmi — neskaidrības gadījumā ieteicama juridiska konsultācija.', ref:'NKDL 20. p. 11. d.'}}
+   ]}
+];
+
+function wizardBadge(verdict){
+  const map = {
+    essential:{cls:'green', label:'✅ Būtisks pakalpojuma sniedzējs'},
+    important:{cls:'green', label:'✅ Svarīgs pakalpojuma sniedzējs'},
+    'essential-safety':{cls:'orange', label:'🟡 Iespējams būtisks (nozīmīguma kritērijs)'},
+    'essential-safety-unclear':{cls:'red', label:'🔴 Nepieciešama pārbaude'},
+    unclear:{cls:'red', label:'🔴 Nepieciešama pārbaude'},
+    out:{cls:'orange', label:'🟡 Ārpus tvēruma (Latvijā)'},
+    'out-lv':{cls:'orange', label:'🟡 Uzraudzība citā valstī'},
+    'not-met':{cls:'orange', label:'🟡 Kritēriji nav konstatēti'},
+  };
+  const m = map[verdict] || {cls:'grey', label:verdict};
+  return `<span class="badge ${m.cls}">${m.label}</span>`;
+}
+
+async function loadWizardState(){
+  if(!db) return null;
+  return await dbGet(DOC.wizardState());
+}
+async function saveWizardState(state){
+  if(!db) return;
+  await dbUpdate(DOC.wizardState(), {...state, _updatedAt: Date.now(), _updatedBy: myId});
+}
+
+function wizardResolveSectorSize(trail){
+  const sectorEntry = trail.find(t=>['E','I','none'].includes(t.tag));
+  const sizeEntry = trail.find(t=>['large','medium','small'].includes(t.tag));
+  const soleProvider = trail.find(t=>t.stepId==='D3');
+  const sector = sectorEntry ? sectorEntry.tag : null;
+  const size = sizeEntry ? sizeEntry.tag : null;
+  if(sector==='E' && size==='large') return {verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'"E" grupas nozare un liels uzņēmums nosaka būtiska pakalpojuma sniedzēja statusu.', ref:'NKDL 20. p. 8. d.'};
+  if(sector==='E' && size==='medium') return {verdict:'important', title:'Svarīga pakalpojuma sniedzējs', reason:'"E" grupas nozarē vidējs uzņēmums ir svarīgs pakalpojumu sniedzējs.', ref:'NKDL 21. p. 1. d. 1. pk.'};
+  if(sector==='I' && (size==='large'||size==='medium')) return {verdict:'important', title:'Svarīga pakalpojuma sniedzējs', reason:'"I" grupas nozarē vidēji un lieli uzņēmumi ir svarīgi pakalpojumu sniedzēji.', ref:'NKDL 21. p. 1. d. 2. pk.'};
+  if(soleProvider && soleProvider.optText.startsWith('Jā')){
+    return sector==='E'
+      ? {verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Vienīgajam pakalpojuma sniedzējam nozarē statuss piemērojams neatkarīgi no lieluma.', ref:'NKDL 20. p. 9. d.'}
+      : {verdict:'important', title:'Svarīga pakalpojuma sniedzējs', reason:'Vienīgajam pakalpojuma sniedzējam nozarē statuss piemērojams neatkarīgi no lieluma.', ref:'NKDL 21. p. 1. d. 3. pk.'};
+  }
+  return {verdict:'not-met', title:'Pēc sniegtajām atbildēm kritēriji nav izpildīti', reason:'Balstoties uz atbildēm, "būtiska" vai "svarīga" pakalpojuma sniedzēja kritēriji nav konstatēti. NKDC ir tiesības pieņemt citu lēmumu.', ref:'NKDL 22. p. 5., 5.1 d.'};
+}
+
+async function renderVednis(){
+  const el = document.getElementById('view-vednis');
+  const state = await loadWizardState();
+
+  if(state && state.verdict){
+    renderWizardResult(state);
+    return;
+  }
+
+  const trail = state?.trail || [];
+  const currentId = state?.currentId || 'A1';
+  renderWizardStep(currentId, trail);
+}
+
+function renderWizardStep(stepId, trail){
+  const el = document.getElementById('view-vednis');
+  const step = WIZARD_STEPS.find(s=>s.id===stepId);
+  const trailHtml = trail.length ? `<div class="pill-row" style="margin-bottom:16px;">${trail.map(t=>`<span class="badge grey">${t.optText}</span>`).join('')}</div>` : '';
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Piemērojamības vednis</div>
+      <p class="hint">Kopīgs vednis komandai — atbildes redz visi, progress saglabājas automātiski.</p>
+      ${trailHtml}
+      <div class="mono" style="font-size:.72rem; color:var(--brass); margin-bottom:8px;">${step.kicker}</div>
+      <h3 style="margin:0 0 8px; font-size:1.05rem; font-weight:600;">${step.title}</h3>
+      ${step.sub ? `<p class="hint" style="margin-bottom:6px;">${step.sub}</p>` : ''}
+      <p class="hint">${step.why} <span class="mono" style="color:var(--grey)">${step.ref}</span></p>
+      <div id="wizard-opts" style="display:flex; flex-direction:column; gap:8px; margin-top:12px;"></div>
+      <div style="margin-top:18px; display:flex; justify-content:space-between;">
+        <button class="btn ghost small edit-only" id="wizard-back-btn" ${trail.length===0?'style="visibility:hidden"':''}>← Iepriekšējais</button>
+        <button class="btn ghost small edit-only" id="wizard-restart-btn" ${trail.length===0?'style="visibility:hidden"':''}>Sākt no jauna</button>
+      </div>
+    </div>
+  `;
+  const optsEl = document.getElementById('wizard-opts');
+  step.opts.forEach((o, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'btn ghost edit-only';
+    btn.style.cssText = 'text-align:left; justify-content:flex-start;';
+    btn.innerHTML = `<span class="mono" style="color:var(--grey); margin-right:10px;">${String.fromCharCode(65+idx)}</span>${o.t}`;
+    btn.addEventListener('click', async ()=>{
+      const newTrail = [...trail, {stepId, kicker:step.kicker, optText:o.t, tag:o.tag}];
+      if(o.out){
+        let result = o.out;
+        if(result.verdict === 'final'){
+          result = wizardResolveSectorSize(newTrail);
+        }
+        await saveWizardState({trail:newTrail, currentId:null, verdict:result.verdict, verdictTitle:result.title, verdictReason:result.reason, verdictRef:result.ref});
+        renderWizardResult({trail:newTrail, verdict:result.verdict, verdictTitle:result.title, verdictReason:result.reason, verdictRef:result.ref});
+      } else {
+        await saveWizardState({trail:newTrail, currentId:o.next, verdict:null});
+        renderWizardStep(o.next, newTrail);
+      }
+    });
+    optsEl.appendChild(btn);
+  });
+
+  document.getElementById('wizard-back-btn')?.addEventListener('click', async ()=>{
+    if(trail.length===0) return;
+    const newTrail = trail.slice(0, -1);
+    const prevId = newTrail.length ? newTrail[newTrail.length-1].stepId : 'A1';
+    const backToId = trail[trail.length-1].stepId;
+    await saveWizardState({trail:newTrail, currentId:backToId, verdict:null});
+    renderWizardStep(backToId, newTrail);
+  });
+  document.getElementById('wizard-restart-btn')?.addEventListener('click', async ()=>{
+    await saveWizardState({trail:[], currentId:'A1', verdict:null});
+    renderWizardStep('A1', []);
+  });
+}
+
+function renderWizardResult(state){
+  const el = document.getElementById('view-vednis');
+  const trail = state.trail || [];
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Piemērojamības vednis — rezultāts</div>
+      ${wizardBadge(state.verdict)}
+      <h3 style="margin:12px 0 6px; font-size:1.2rem; font-weight:600;">${esc(state.verdictTitle)}</h3>
+      <p class="hint">${esc(state.verdictReason)} <span class="mono" style="color:var(--grey)">${esc(state.verdictRef)}</span></p>
+      <div class="section-title" style="font-size:.95rem; margin-top:20px;">Pamatojuma ķēde</div>
+      <div style="border-left:2px solid var(--line); padding-left:16px; margin-bottom:20px;">
+        ${trail.map(t=>`<div style="margin-bottom:8px; font-size:.87rem;">${t.optText}</div>`).join('')}
+      </div>
+      <div class="card" style="background:var(--paper); margin-bottom:0;">
+        <p style="font-size:.83rem; color:var(--ink-soft); margin:0;">ℹ️ Šis ir pašnovērtējums, nevis NKDC lēmums. NKDC ir tiesības pieņemt citu lēmumu (NKDL 22. p. 5., 5.1 d.).</p>
+      </div>
+      <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn edit-only" id="wizard-to-applicability-btn">Skatīt "Piemērojamība" cilni →</button>
+        <button class="btn ghost edit-only" id="wizard-redo-btn">Sākt no jauna</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('wizard-to-applicability-btn')?.addEventListener('click', ()=>{
+    document.querySelector('.tab[data-view="piemerojamiba"]').click();
+  });
+  document.getElementById('wizard-redo-btn')?.addEventListener('click', async ()=>{
+    await saveWizardState({trail:[], currentId:'A1', verdict:null});
+    renderWizardStep('A1', []);
+  });
+}
+
+/* ============================================================
+   VIEW: Tehniskās pārbaudes (technical checks — checklist with
+   honest manual-verification instructions; published pages cannot
+   make arbitrary network requests, so this guides a human through
+   real checks rather than faking an automated scanner)
+   ============================================================ */
+const TECH_CHECKS = [
+  {id:'tc1', title:'Ārējā perimetra skenēšana (porti, novecojuša programmatūra)',
+   why:'Atklāj atvērtus portus un novecojušu programmatūru uz publiski pieejamiem serveriem.',
+   how:'Izmanto <strong>Nmap</strong> (bezmaksas): <code>nmap -sV quant.lv</code> no komandrindas, vai tiešsaistes rīku, piem., <a href="https://www.ssllabs.com/ssltest/" target="_blank" rel="noopener">SSL Labs</a> SSL/TLS konfigurācijas pārbaudei. Skenē TIKAI domēnus/IP, kas pieder QUANT.',
+   ref:'Art. 21(2)(e) — sistēmu drošība'},
+  {id:'tc2', title:'Noplūdušu akreditācijas datu pārbaude',
+   why:'Pārbauda, vai darbinieku e-pasti/paroles ir parādījušies zināmās datu noplūdēs.',
+   how:'Izmanto <a href="https://haveibeenpwned.com/DomainSearch" target="_blank" rel="noopener">Have I Been Pwned Domain Search</a> (bezmaksas domēna pārbaudei, prasa domēna verifikāciju) vai pārbaudi atsevišķus e-pastus <a href="https://haveibeenpwned.com" target="_blank" rel="noopener">haveibeenpwned.com</a>.',
+   ref:'397. not. — personāla drošība'},
+  {id:'tc3', title:'Wi-Fi/tīkla konfigurācijas audits objektos',
+   why:'Pārbauda segmentāciju, viesu tīklu nodalīšanu, šifrēšanas standartu (WPA2/3).',
+   how:'Fiziska pārbaude uz vietas vai attālināti caur maršrutētāja admin paneli. Pārbaudi: (1) vai viesu/klientu Wi-Fi nodalīts no iekšējā tīkla, (2) vai izmantots WPA2 vai WPA3 (ne WEP/atvērts), (3) vai tīkla iekārtas ir izolētas no pārējā biroja tīkla.',
+   ref:'397. not. 55.1.-55.4. p.'},
+  {id:'tc4', title:'MFA pārbaude kritiskajām sistēmām',
+   why:'Apstiprina, ka daudzfaktoru autentifikācija tiešām ir ieslēgta, nevis tikai pieejama.',
+   how:'Administrators pārbauda katrai sistēmai (e-pasts, CRM, attālās piekļuves rīki) iestatījumos, vai MFA ir obligāts visiem lietotājiem ar administratora tiesībām. Uzņem ekrānuzņēmumu kā pierādījumu.',
+   ref:'397. not. matrica pēc klases'},
+  {id:'tc5', title:'Rezerves kopiju atjaunošanas tests',
+   why:'Pierāda, ka dublējumi tiešām darbojas — ne tikai eksistē.',
+   how:'Izvēlies testa datu kopu, veic pilnu atjaunošanas procedūru izolētā vidē, pieraksti, cik ilgs laiks nepieciešams un vai dati ir pilnīgi un nebojāti.',
+   ref:'397. not. 67.-75. p.'},
+  {id:'tc6', title:'Neatkarīgs ielaušanās tests (pentests)',
+   why:'Identificē reālas ievainojamības, ko iekšēja pārbaude nevar atklāt.',
+   how:'<strong>Šo nevar veikt pašrocīgi</strong> — nepieciešams sertificēts ārējs pakalpojumu sniedzējs. Pēc 397. not. 131.-134. p. testētājs nedrīkst būt bijis iesaistīts sistēmas izstrādē/uzturēšanā pēdējos 3 gados. Meklē LR sertificētus piegādātājus (piem., CREST vai OSCP sertificētus speciālistus).',
+   ref:'397. not. 131.-134. p.'},
+];
+
+async function loadTechChecks(){
+  const out = {};
+  TECH_CHECKS.forEach(t=>out[t.id] = {status:null, result:'', date:''});
+  if(!db) return out;
+  for(const t of TECH_CHECKS){
+    const data = await dbGet(DOC.techCheck(t.id));
+    if(data) out[t.id] = {status:data.status??null, result:data.result??'', date:data.date??'', _updatedBy:data._updatedBy, _updatedAt:data._updatedAt};
+  }
+  return out;
+}
+
+let techChecksCache = {};
+
+async function renderTehniskie(){
+  const el = document.getElementById('view-tehniskie');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Tehniskās pārbaudes</div>
+      <p class="hint">Godīga piezīme: šī lapa nevar pati veikt tīkla skenēšanu (publicētas lapas nevar sūtīt pieprasījumus uz jebkuru serveri drošības ierobežojumu dēļ). Tā vietā — konkrētas instrukcijas, kā veikt katru pārbaudi pašrocīgi, un vieta rezultātu ierakstīšanai.</p>
+      <div id="tech-list"></div>
+    </div>
+  `;
+  techChecksCache = await loadTechChecks();
+  const list = document.getElementById('tech-list');
+  TECH_CHECKS.forEach(t=>{
+    const s = techChecksCache[t.id];
+    const row = document.createElement('div');
+    row.style.cssText = 'border-bottom:1px solid var(--line); padding:16px 0;';
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline; margin-bottom:6px;">
+        <strong style="font-size:.93rem;">${t.title}</strong>
+        <span class="mono" style="font-size:.74rem; color:var(--grey);">${t.ref}</span>
+      </div>
+      <p style="font-size:.84rem; color:var(--ink-soft); margin:0 0 8px; line-height:1.5;"><em>${t.why}</em></p>
+      <div style="font-size:.84rem; line-height:1.55; background:var(--paper); border:1px solid var(--line); padding:10px 12px; margin-bottom:10px;">${t.how}</div>
+      <div class="grid3" style="margin-bottom:8px;">
+        <div class="field">
+          <label>Statuss</label>
+          <div class="seg" data-tid="${t.id}" data-role="status">
+            ${['Nav veikts','Ieplānots','Veikts — OK','Veikts — problēmas'].map(v=>`<button data-v="${v}" class="${s.status===v?'on':''}">${v}</button>`).join('')}
+          </div>
+        </div>
+        <div class="field"><label>Datums</label><input type="date" data-tid="${t.id}" data-role="date" value="${esc(s.date||'')}"></div>
+      </div>
+      <input type="text" data-tid="${t.id}" data-role="result" placeholder="Rezultāts / piezīmes..." value="${esc(s.result||'')}" style="font-size:.83rem;">
+      <div class="who">${s._updatedBy ? fmtWho(s._updatedBy, s._updatedAt) : ''}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll('.seg[data-role="status"] button').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const tid = btn.closest('.seg').dataset.tid;
+      btn.closest('.seg').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      techChecksCache[tid] = {...techChecksCache[tid], status: btn.dataset.v};
+      if(db) await dbUpdate(DOC.techCheck(tid), {status: btn.dataset.v, _updatedAt: Date.now(), _updatedBy: myId});
+      await updateTechProgress();
+    });
+  });
+  list.querySelectorAll('input[data-role="date"], input[data-role="result"]').forEach(inp=>{
+    let t;
+    inp.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const tid = inp.dataset.tid;
+        const role = inp.dataset.role;
+        techChecksCache[tid] = {...techChecksCache[tid], [role]: inp.value};
+        if(db) await dbUpdate(DOC.techCheck(tid), {[role]: inp.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 600);
+    });
+  });
+}
+
+async function updateTechProgress(){
+  if(!db) return;
+  const done = TECH_CHECKS.filter(t=>{
+    const s = techChecksCache[t.id];
+    return s.status === 'Veikts — OK' || s.status === 'Veikts — problēmas';
+  }).length;
+  const progress = Math.round((done / TECH_CHECKS.length) * 100);
+  await dbUpdate(DOC.techStatus(), {progress, _updatedAt: Date.now()});
+}
+
+/* ============================================================
+   VIEW: Apmācības (training tracker, linked to existing Mācību centrs)
+   ============================================================ */
+const TRAINING_MODULES = [
+  {id:'tr1', title:'Pamata kiberhigiēna (paroles, pikšķerēšana, sociālā inženierija)', audience:'Visi darbinieki', ref:'397. not. 76.1.2 p.', note:'Var integrēt esošajā Mācību centra programmā kā papildu moduli blakus apsardzes kvalifikācijas testiem.'},
+  {id:'tr2', title:'Jaunu darbinieku pirmreizējā instruktāža', audience:'Jaunie darbinieki', ref:'397. not. 76.1.1 p.', note:'Jāveic ≤1 mēnesi pēc konta izveides — dabiski iekļaujas esošajā onboarding procesā.'},
+  {id:'tr3', title:'Tehniskā apmācība IT atbildīgajiem', audience:'IT atbildīgie', ref:'Art. 21(2)(g)', note:'Padziļināts modulis par konkrētajām QUANT sistēmām un incidentu reaģēšanu.'},
+  {id:'tr4', title:'Kiberdrošības vadītāja ikgadējā apmācība', audience:'Kiberdrošības vadītājs', ref:'NKDL 25. p. 5. d.', note:'Šo nodrošina CERT.LV, nevis QUANT iekšēji — jāseko līdzi grafikam.'},
+  {id:'tr5', title:'Fišinga simulācija', audience:'Visi darbinieki', ref:'Labā prakse (nav tiešs likuma pants)', note:'Nosūtīt testa fišinga e-pastu un izsekot, cik cilvēku atver/noklikšķina — reāls kultūras mērs.'},
+  {id:'tr6', title:'Galda mācības: incidenta reaģēšana (tabletop exercise)', audience:'Vadība + IT + kiberdrošības vadītājs', ref:'397. not. 7. sad. (gatavības pārbaude)', note:'Analoģiski ostas apsardzes mācībām — izspēlēt scenāriju un nomērīt reakcijas laiku pret 24h/72h normām.'},
+];
+
+async function loadTraining(){
+  const out = {};
+  TRAINING_MODULES.forEach(t=>out[t.id] = {status:null, date:'', coverage:''});
+  if(!db) return out;
+  for(const t of TRAINING_MODULES){
+    const data = await dbGet(DOC.trainingItem(t.id));
+    if(data) out[t.id] = {status:data.status??null, date:data.date??'', coverage:data.coverage??'', _updatedBy:data._updatedBy, _updatedAt:data._updatedAt};
+  }
+  return out;
+}
+let trainingCache = {};
+
+async function renderApmacibas(){
+  const el = document.getElementById('view-apmacibas');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Apmācības</div>
+      <p class="hint">Apmācību trekeris, veidots ap QUANT jau esošo Mācību centru — lielākā daļa moduļu var tikt integrēti esošajā struktūrā, nevis būvēti no nulles.</p>
+      <div id="training-list"></div>
+    </div>
+  `;
+  trainingCache = await loadTraining();
+  const list = document.getElementById('training-list');
+  TRAINING_MODULES.forEach(t=>{
+    const s = trainingCache[t.id];
+    const row = document.createElement('div');
+    row.style.cssText = 'border-bottom:1px solid var(--line); padding:16px 0;';
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline; margin-bottom:4px;">
+        <strong style="font-size:.93rem;">${t.title}</strong>
+        <span class="mono" style="font-size:.74rem; color:var(--grey);">${t.ref}</span>
+      </div>
+      <div style="font-size:.8rem; color:var(--brass); font-weight:600; margin-bottom:6px;">${t.audience}</div>
+      <p style="font-size:.84rem; color:var(--ink-soft); margin:0 0 10px; line-height:1.5;">${t.note}</p>
+      <div class="grid3" style="margin-bottom:8px;">
+        <div class="field">
+          <label>Statuss</label>
+          <div class="seg" data-tid="${t.id}" data-role="status">
+            ${['Nav plānots','Ieplānots','Pabeigts'].map(v=>`<button data-v="${v}" class="${s.status===v?'on':''}">${v}</button>`).join('')}
+          </div>
+        </div>
+        <div class="field"><label>Datums</label><input type="date" data-tid="${t.id}" data-role="date" value="${esc(s.date||'')}"></div>
+        <div class="field"><label>Pārklājums (%)</label><input type="text" data-tid="${t.id}" data-role="coverage" value="${esc(s.coverage||'')}" placeholder="piem., 85%"></div>
+      </div>
+      <div class="who">${s._updatedBy ? fmtWho(s._updatedBy, s._updatedAt) : ''}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll('.seg[data-role="status"] button').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const tid = btn.closest('.seg').dataset.tid;
+      btn.closest('.seg').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      trainingCache[tid] = {...trainingCache[tid], status: btn.dataset.v};
+      if(db) await dbUpdate(DOC.trainingItem(tid), {status: btn.dataset.v, _updatedAt: Date.now(), _updatedBy: myId});
+      await updateTrainingProgress();
+    });
+  });
+  list.querySelectorAll('input[data-role="date"], input[data-role="coverage"]').forEach(inp=>{
+    let t;
+    inp.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const tid = inp.dataset.tid;
+        const role = inp.dataset.role;
+        trainingCache[tid] = {...trainingCache[tid], [role]: inp.value};
+        if(db) await dbUpdate(DOC.trainingItem(tid), {[role]: inp.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 600);
+    });
+  });
+}
+
+async function updateTrainingProgress(){
+  if(!db) return;
+  const done = TRAINING_MODULES.filter(t=>trainingCache[t.id].status === 'Pabeigts').length;
+  const progress = Math.round((done / TRAINING_MODULES.length) * 100);
+  await dbUpdate(DOC.trainingStatus(), {progress, _updatedAt: Date.now()});
+}
+
+/* ============================================================
+   VIEW: Politikas (document register with AI-assisted drafting)
+   ============================================================ */
+const REQUIRED_POLICIES = [
+  {id:'pol1', title:'Kiberdrošības politika', ref:'397. not. 27.-28. p.', desc:'Vispārējā politika, kas apstiprināta vadībā un pārskatīta ne retāk kā reizi 3 gados.'},
+  {id:'pol2', title:'IKT resursu un informācijas sistēmu katalogs', ref:'397. not. 31. p.', desc:'Visu izmantoto sistēmu saraksts ar klasifikāciju (sk. arī "Aktīvi" cilni).'},
+  {id:'pol3', title:'Risku pārvaldības un IKT nepārtrauktības plāns', ref:'397. not. 21.3, 40. p.', desc:'Kā uzņēmums pārvalda kiberriskus un nodrošina darbības nepārtrauktību krīzes gadījumā.'},
+  {id:'pol4', title:'Incidentu žurnāls un reaģēšanas procedūra', ref:'397. not. 47. p., 7. sad.', desc:'Process, kā tiek fiksēti, novērtēti un ziņoti kiberdrošības incidenti.'},
+];
+
+async function loadPolicies(){
+  const out = {};
+  REQUIRED_POLICIES.forEach(p=>out[p.id] = {status:null, draft:'', version:0});
+  if(!db) return out;
+  for(const p of REQUIRED_POLICIES){
+    const data = await dbGet(DOC.policy(p.id));
+    if(data) out[p.id] = {status:data.status??null, draft:data.draft??'', version:data.version??0, _updatedBy:data._updatedBy, _updatedAt:data._updatedAt};
+  }
+  return out;
+}
+let policiesCache = {};
+
+async function renderPolitikas(){
+  const el = document.getElementById('view-politikas');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Politiku reģistrs</div>
+      <p class="hint">Četri obligātie dokumenti. AI var sagatavot sākotnējo melnrakstu, balstoties uz Gap-Assessment datiem — to vienmēr jāpārskata atbildīgajai personai vai juristam pirms apstiprināšanas.</p>
+      <div id="policies-list"></div>
+    </div>
+  `;
+  policiesCache = await loadPolicies();
+  const list = document.getElementById('policies-list');
+  REQUIRED_POLICIES.forEach(p=>{
+    const s = policiesCache[p.id];
+    const row = document.createElement('div');
+    row.style.cssText = 'border:1px solid var(--line); background:var(--paper); padding:16px; margin-bottom:12px;';
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline; margin-bottom:6px;">
+        <strong style="font-size:.95rem;">${p.title}</strong>
+        <span class="mono" style="font-size:.74rem; color:var(--grey);">${p.ref}</span>
+      </div>
+      <p style="font-size:.85rem; color:var(--ink-soft); margin:0 0 10px;">${p.desc}</p>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+        <div class="seg" data-pid="${p.id}" data-role="status">
+          ${['Nav sākts','Melnraksts','Apstiprināšanā','Apstiprināts'].map(v=>`<button data-v="${v}" class="${s.status===v?'on':''}">${v}</button>`).join('')}
+        </div>
+        <button class="btn ai small edit-only ai-draft-policy-btn" data-pid="${p.id}">✦ AI: sagatavot melnrakstu</button>
+        <span style="font-size:.74rem; color:var(--grey); margin-left:auto;">Versija: ${s.version||0}</span>
+      </div>
+      <div class="ai-box" data-role="ai-policy-result" data-pid="${p.id}"></div>
+      <textarea data-pid="${p.id}" data-role="draft" placeholder="Dokumenta teksts (melnraksts)..." style="min-height:120px; font-size:.84rem; font-family:'IBM Plex Mono'; line-height:1.6;">${esc(s.draft||'')}</textarea>
+      <div class="who">${s._updatedBy ? 'Pēdējo reizi labots: ' + fmtWho(s._updatedBy, s._updatedAt) : ''}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll('.seg[data-role="status"] button').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const pid = btn.closest('.seg').dataset.pid;
+      btn.closest('.seg').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      policiesCache[pid] = {...policiesCache[pid], status: btn.dataset.v};
+      if(db) await dbUpdate(DOC.policy(pid), {status: btn.dataset.v, _updatedAt: Date.now(), _updatedBy: myId});
+      await updatePoliciesProgress();
+    });
+  });
+  list.querySelectorAll('textarea[data-role="draft"]').forEach(ta=>{
+    let t;
+    ta.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const pid = ta.dataset.pid;
+        const newVersion = (policiesCache[pid].version || 0) + 1;
+        policiesCache[pid] = {...policiesCache[pid], draft: ta.value, version: newVersion};
+        if(db) await dbUpdate(DOC.policy(pid), {draft: ta.value, version: newVersion, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 800);
+    });
+  });
+  list.querySelectorAll('.ai-draft-policy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>runAiPolicyFullDraft(btn.dataset.pid));
+  });
+}
+
+async function updatePoliciesProgress(){
+  if(!db) return;
+  const done = REQUIRED_POLICIES.filter(p=>policiesCache[p.id].status === 'Apstiprināts').length;
+  const progress = Math.round((done / REQUIRED_POLICIES.length) * 100);
+  await dbUpdate(DOC.policiesStatus(), {progress, _updatedAt: Date.now()});
+}
+
+async function runAiPolicyFullDraft(pid){
+  const policy = REQUIRED_POLICIES.find(p=>p.id===pid);
+  const box = document.querySelector(`.ai-box[data-pid="${pid}"]`);
+  if(!sample){
+    box.className = 'ai-box show';
+    box.innerHTML = `<div class="lbl">AI nav pieejams</div>Šajā skatā AI palīgs nav ieslēgts.`;
+    return;
+  }
+  box.className = 'ai-box show';
+  box.innerHTML = `<div class="lbl">AI gatavo melnrakstu</div>Domā...`;
+
+  // pull gap-assessment context relevant to this policy
+  controlsCache = await loadControls();
+  const contextLines = CONTROLS.map(c=>{
+    const s = controlsCache[c.id];
+    return `- ${c.text} (atbilstība: ${s?.compliance || 'nav norādīts'})`;
+  }).join('\n');
+
+  const companyContext = await getCompanyContextForAi();
+  const prompt = `Tu palīdzi Latvijas uzņēmumam sagatavot dokumentu "${policy.title}" saskaņā ar MK noteikumiem Nr. 397.
+
+Konteksts par uzņēmumu:
+${companyContext}
+
+Dokumenta mērķis: ${policy.desc}
+
+Pašreizējais atbilstības stāvoklis (no pašnovērtējuma):
+${contextLines}
+
+Uzraksti strukturētu dokumenta melnrakstu latviešu valodā (400-600 vārdi) ar sadaļām (mērķis, darbības joma, atbildīgās personas, galvenās prasības, pārskatīšanas kārtība). Pielāgo dokumentu uzņēmuma reālajam lielumam un nozarei (sk. kontekstu augstāk), nevis vispārīgam liela korporācijas šablonam. Beigās pievieno piezīmi, ka melnraksts jāapstiprina vadībā un jāpārskata ar juristu.
+
+Atbildi TIKAI ar dokumenta tekstu, bez ievada frāzēm.`;
+
+  try {
+    await sample(prompt, {modelTier:'default', onText:({text})=>{
+      box.innerHTML = `<div class="lbl">AI melnraksts</div><div style="white-space:pre-wrap; font-size:.82rem; line-height:1.6; max-height:300px; overflow-y:auto; margin-bottom:10px;">${esc(text)}</div><button class="btn small" id="apply-policy-draft-${pid}">Ievietot tekstu dokumentā</button>`;
+      const applyBtn = document.getElementById(`apply-policy-draft-${pid}`);
+      if(applyBtn){
+        applyBtn.onclick = async ()=>{
+          const textarea = document.querySelector(`textarea[data-pid="${pid}"][data-role="draft"]`);
+          textarea.value = text;
+          const newVersion = (policiesCache[pid].version || 0) + 1;
+          policiesCache[pid] = {...policiesCache[pid], draft: text, version: newVersion, status: policiesCache[pid].status || 'Melnraksts'};
+          if(db) await dbUpdate(DOC.policy(pid), {draft: text, version: newVersion, status: policiesCache[pid].status, _updatedAt: Date.now(), _updatedBy: myId});
+          renderPolitikas();
+        };
+      }
+    }});
+  } catch(e){
+    let msg = 'Neizdevās izveidot melnrakstu.';
+    if(e.code === 'not_granted') msg = 'AI izmantošana šai lapai nav atļauta.';
+    if(e.code === 'rate_limited') msg = 'Pārāk daudz pieprasījumu — mēģini vēlreiz vēlāk.';
+    box.innerHTML = `<div class="lbl">Kļūda</div>${msg}`;
+  }
+}
+
+/* ============================================================
+   VIEW: 05 Atklātie jautājumi
+   ============================================================ */
+async function renderJautajumi(){
+  const el = document.getElementById('view-jautajumi');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Atklātie jautājumi</div>
+      <p class="hint">Konkrēti jautājumi, kas jānoskaidro uzņēmuma iekšienē. Pārsūti tos atbildīgajai personai vai izmanto kā sarunas plānu.</p>
+      <div id="q-list"></div>
+    </div>
+  `;
+  const list = document.getElementById('q-list');
+  for(let i=0; i<OPEN_QUESTIONS.length; i++){
+    const n = i+1;
+    const data = db ? await dbGet(DOC.question(n)) : null;
+    const row = document.createElement('div');
+    row.style.cssText = 'border-bottom:1px solid var(--line); padding:14px 0;';
+    row.innerHTML = `
+      <div style="font-size:.9rem; font-weight:600; margin-bottom:8px;">${n}. ${OPEN_QUESTIONS[i]}</div>
+      <textarea placeholder="Atbilde..." data-n="${n}" style="font-size:.85rem;">${esc(data?.answer||'')}</textarea>
+      <div class="who">${data?._updatedBy ? 'Atbildēja: ' + fmtWho(data._updatedBy, data._updatedAt) : 'Vēl nav atbildes'}</div>
+    `;
+    list.appendChild(row);
+  }
+  list.querySelectorAll('textarea').forEach(ta=>{
+    let t;
+    ta.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const n = +ta.dataset.n;
+        if(db) await dbUpdate(DOC.question(n), {answer: ta.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 600);
+    });
+  });
+}
+
+/* ============================================================
+   VIEW: 06 Rīcības plāns (derived from controlsCache)
+   ============================================================ */
+async function renderPlans(){
+  const el = document.getElementById('view-plans');
+  if(Object.keys(controlsCache).length === 0 || !controlsCache[CONTROLS[0].id]?._loaded){
+    controlsCache = await loadControls();
+  }
+  const weightNum = {high:3, medium:2, low:1};
+  const items = CONTROLS.map(c=>{
+    const s = controlsCache[c.id] || {};
+    if(s.compliance === 'N/A') return null;
+    const hasData = s.compliance || (s.maturity !== null && s.maturity !== undefined);
+    if(!hasData) return {c, score:null};
+    const w = weightNum[c.w] || 1;
+    const maturity = s.maturity ?? 0;
+    let score = w * (5 - maturity);
+    if(s.compliance === 'Nē') score += 20;
+    return {c, score, compliance:s.compliance};
+  }).filter(Boolean);
+
+  const withData = items.filter(i=>i.score !== null).sort((a,b)=>b.score-a.score);
+  const withoutData = items.filter(i=>i.score === null);
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Prioritārais rīcības plāns</div>
+      <p class="hint">Automātiski aprēķināts no Gap-Assessment datiem. Jo augstāks rādītājs, jo steidzamāk jārisina (juridisks "Nē" atbildes pievieno papildu prioritāti).</p>
+      ${withData.length === 0 ? `<div class="empty-state">Vēl nav datu — aizpildi Gap-Assessment cilni, lai šeit parādītos prioritātes.</div>` : ''}
+      <table id="plan-table" style="${withData.length===0?'display:none':''}">
+        <thead><tr><th>#</th><th>Prasība</th><th>Kat.</th><th>Risks</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      ${withoutData.length > 0 ? `<p class="hint" style="margin-top:16px;">${withoutData.length} prasības vēl nav aizpildītas Gap-Assessment cilnē.</p>` : ''}
+    </div>
+  `;
+  if(withData.length > 0){
+    const tbody = el.querySelector('tbody');
+    withData.slice(0, 10).forEach((item, idx)=>{
+      const tr = document.createElement('tr');
+      const riskBadge = item.score >= 20 ? 'red' : item.score >= 8 ? 'orange' : 'green';
+      tr.innerHTML = `<td>${idx+1}</td><td>${item.c.text}</td><td class="mono">${item.c.cat.toUpperCase()}</td><td><span class="badge ${riskBadge}">${item.score}</span></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+/* ============================================================
+   VIEW: 07 Lēmumu žurnāls
+   ============================================================ */
+async function renderZurnals(){
+  const el = document.getElementById('view-zurnals');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Lēmumu žurnāls</div>
+      <p class="hint">Vienkāršs ieraksts — kas, kad un kāpēc nolēma.</p>
+      <div class="grid2 edit-only" style="margin-bottom:14px;">
+        <div class="field"><label>Lēmums</label><input type="text" id="new-decision"></div>
+        <div class="field"><label>Pamatojums</label><input type="text" id="new-rationale"></div>
+      </div>
+      <button class="btn edit-only" id="add-decision-btn">+ Pievienot ierakstu</button>
+      <table style="margin-top:18px;">
+        <thead><tr><th>Datums</th><th>Lēmums</th><th>Pamatojums</th><th>Pievienoja</th></tr></thead>
+        <tbody id="decisions-tbody"></tbody>
+      </table>
+    </div>
+  `;
+  await loadDecisions();
+  document.getElementById('add-decision-btn').addEventListener('click', async ()=>{
+    const decision = document.getElementById('new-decision').value.trim();
+    const rationale = document.getElementById('new-rationale').value.trim();
+    if(!decision) return;
+    if(db){
+      await DOC.decisionsCol().add({decision, rationale, createdAt: Date.now(), createdBy: myId});
+    }
+    document.getElementById('new-decision').value = '';
+    document.getElementById('new-rationale').value = '';
+    await loadDecisions();
+  });
+}
+
+async function loadDecisions(){
+  const tbody = document.getElementById('decisions-tbody');
+  tbody.innerHTML = '';
+  if(!db) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Lokāls skats — lēmumi netiek saglabāti.</td></tr>`; return; }
+  try {
+    const snap = await DOC.decisionsCol().orderBy('createdAt','desc').limit(50).get();
+    if(snap.docs.length === 0){
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Vēl nav ierakstu.</td></tr>`;
+      return;
+    }
+    snap.docs.forEach(d=>{
+      const data = d.data();
+      const tr = document.createElement('tr');
+      const dstr = new Date(data.createdAt).toLocaleDateString('lv-LV');
+      tr.innerHTML = `<td>${dstr}</td><td>${esc(data.decision)}</td><td>${esc(data.rationale||'')}</td><td>${fmtWho(data.createdBy, data.createdAt)}</td>`;
+      tbody.appendChild(tr);
+    });
+  } catch(e){
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Neizdevās ielādēt.</td></tr>`;
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+/* ============================================================
+   VIEW: Partneri — honest acknowledgment of what this tool and
+   one person cannot do alone, plus a register of real external
+   contacts for those gaps (pentest, legal, CERT.LV).
+   ============================================================ */
+const PARTNER_CATEGORIES = [
+  {id:'pentest', title:'Sertificēts ielaušanās testēšanas (pentest) pakalpojums',
+   why:'397. not. 131.-134. p. pieprasa, lai testētājs nebūtu bijis iesaistīts sistēmas izstrādē vai uzturēšanā pēdējos 3 gados — to fiziski nevar nodrošināt viena persona, kas pārzina uzņēmuma sistēmas. Nepieciešams neatkarīgs, sertificēts piegādātājs (piem., ar OSCP, CREST vai līdzvērtīgu sertifikāciju).',
+   what:'Meklē LR reģistrētu kiberdrošības uzņēmumu ar atsaucēm uz veiktiem pentestiem. Latvijas Drošības Biznesa Asociācija vai NKDC var ieteikt sertificētus piegādātājus.'},
+  {id:'legal', title:'Juridiskā konsultācija par piemērojamību',
+   why:'Dažos gadījumos (piem., apakšuzņēmēja statuss kritiskās infrastruktūras teritorijā) likuma teksts pieļauj vairākas interpretācijas. Pašnovērtējuma instruments var parādīt iespējamos scenārijus, bet galīgo juridisko atbildību var uzņemties tikai kvalificēts jurists vai tieša NKDC atbilde.',
+   what:'Jurists ar pieredzi IT/kiberdrošības regulējumā vai tiešs rakstisks pieprasījums NKDC (nacionālais kiberdrošības centrs).'},
+  {id:'cert', title:'CERT.LV — incidentu reaģēšanas atbalsts',
+   why:'Nav "partneris" komerciālā nozīmē, bet obligāts kontaktpunkts: visi nozīmīgie incidenti jāziņo CERT.LV (un dažkārt arī SAB) noteiktos termiņos. Kiberdrošības vadītāja ikgadējā apmācība arī notiek caur CERT.LV.',
+   what:'Kontakti un ziņošanas formas pieejamas cert.lv. Ieteicams iepazīties ar procesu PIRMS incidenta, nevis tā laikā.'},
+  {id:'audit', title:'Neatkarīgs atbilstības audits',
+   why:'NKDC ir tiesības pieprasīt uzņēmumam apmaksāt ārēju auditu, ja rodas aizdomas par neatbilstību (NKDL 44. p.). Arī bez šāda pieprasījuma neatkarīgs audits pirms pašnovērtējuma iesniegšanas palielina ticamību.',
+   what:'Sertificēts auditors (piem., ISO 27001 vadošais auditors) vai konsultāciju uzņēmums ar NIS2/kiberdrošības pieredzi.'},
+  {id:'itsupport', title:'Tehniskais IT atbalsts ieviešanai',
+   why:'Daudzu pasākumu (MFA, tīkla segmentācija, šifrēšana) ieviešana prasa praktisku IT administrēšanas darbu, ne tikai plānošanu. Ja uzņēmumā nav pietiekamu iekšējo IT resursu, šo daļu ieteicams deleģēt.',
+   what:'IT pakalpojumu sniedzējs vai MSP (Managed Service Provider) ar pieredzi drošības konfigurācijā.'},
+];
+
+async function loadPartnerContacts(){
+  const out = {};
+  PARTNER_CATEGORIES.forEach(p=>out[p.id] = {name:'', contact:'', note:''});
+  if(!db) return out;
+  for(const p of PARTNER_CATEGORIES){
+    const data = await dbGet(pdoc('partners/'+p.id));
+    if(data) out[p.id] = {name:data.name??'', contact:data.contact??'', note:data.note??'', _updatedBy:data._updatedBy, _updatedAt:data._updatedAt};
+  }
+  return out;
+}
+let partnersCache = {};
+
+async function renderPartneri(){
+  const el = document.getElementById('view-partneri');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Partneri</div>
+      <p class="hint">Godīga robeža: šis instruments un viena persona nevar aizstāt visu. Šeit — jomas, kurās nepieciešams ārējs partneris, un vieta, kur fiksēt reālus kontaktus, kad tie atrasti.</p>
+      <div id="partner-list"></div>
+    </div>
+  `;
+  partnersCache = await loadPartnerContacts();
+  const list = document.getElementById('partner-list');
+  PARTNER_CATEGORIES.forEach(p=>{
+    const s = partnersCache[p.id];
+    const hasContact = !!s.name;
+    const row = document.createElement('div');
+    row.style.cssText = 'border-bottom:1px solid var(--line); padding:16px 0;';
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline; margin-bottom:6px;">
+        <strong style="font-size:.93rem;">${p.title}</strong>
+        <span class="badge ${hasContact?'green':'grey'}">${hasContact?'Kontakts atrasts':'Vēl nav kontakta'}</span>
+      </div>
+      <p style="font-size:.84rem; color:var(--ink-soft); margin:0 0 8px; line-height:1.5;"><em>${p.why}</em></p>
+      <div style="font-size:.82rem; line-height:1.5; background:var(--paper); border:1px solid var(--line); padding:10px 12px; margin-bottom:10px;">${p.what}</div>
+      <div class="grid3">
+        <div class="field"><label>Uzņēmums / persona</label><input type="text" data-pid="${p.id}" data-role="name" value="${esc(s.name||'')}" placeholder="Nosaukums..."></div>
+        <div class="field"><label>Kontakts</label><input type="text" data-pid="${p.id}" data-role="contact" value="${esc(s.contact||'')}" placeholder="E-pasts / tālrunis..."></div>
+        <div class="field"><label>Piezīme</label><input type="text" data-pid="${p.id}" data-role="note" value="${esc(s.note||'')}" placeholder="Cena, pieejamība..."></div>
+      </div>
+      <div class="who">${s._updatedBy ? fmtWho(s._updatedBy, s._updatedAt) : ''}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll('input[data-pid]').forEach(inp=>{
+    let t;
+    inp.addEventListener('input', ()=>{
+      clearTimeout(t);
+      t = setTimeout(async ()=>{
+        const pid = inp.dataset.pid;
+        const role = inp.dataset.role;
+        partnersCache[pid] = {...partnersCache[pid], [role]: inp.value};
+        if(db) await dbUpdate(pdoc('partners/'+pid), {[role]: inp.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 600);
+    });
+  });
+}
+
+/* ============================================================
+   Dati un atskaite: report download, project export, guarded import
+   ============================================================ */
+const DATI_SCHEMA = 'nis2-karte';
+const DATI_VERSION = 2;
+const REPORT_CSS = 'body{font-family:Arial,Helvetica,sans-serif;color:#111;max-width:980px;margin:24px auto;padding:0 20px;line-height:1.45}h1{font-size:1.8rem;margin:0 0 4px}h2{font-size:1.15rem;margin:28px 0 8px;border-bottom:2px solid #111;padding-bottom:4px}table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{border:1px solid #bbb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eee}small{color:#555}.box{border:2px solid #111;padding:10px 14px;margin:14px 0}.stats{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}.stats div{border:1px solid #bbb;padding:8px 14px}.stats b{font-size:1.5rem;display:block}@media print{body{margin:0}h2{break-after:avoid}tr{break-inside:avoid}}';
+let datiPending = null;
+
+function datiStrip(o){ if(!o || typeof o !== 'object') return o; const r = {}; Object.keys(o).forEach(k=>{ if(k[0] !== '_' && k !== 'createdBy') r[k] = o[k]; }); return r; }
+function datiMapStrip(o){ const r = {}; Object.keys(o || {}).forEach(k=>{ r[k] = datiStrip(o[k]); }); return r; }
+function datiSlug(s){ return (String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'projekts').slice(0, 40); }
+function datiMsg(text, isErr){ const el = document.getElementById('dati-status'); if(!el) return; el.textContent = text; el.dataset.err = isErr ? '1' : ''; }
+
+async function collectProjectData(){
+  const pase = db ? await dbGet(DOC.pase()) : null;
+  const bases = await loadApplicabilityBases();
+  const calendar = db ? await dbGet(DOC.calendarBase()) : null;
+  const wizard = db ? await dbGet(DOC.wizardState()) : null;
+  const assets = await loadAssets();
+  controlsCache = await loadControls();
+  techChecksCache = await loadTechChecks();
+  trainingCache = await loadTraining();
+  policiesCache = await loadPolicies();
+  partnersCache = await loadPartnerContacts();
+  const questions = {};
+  for(let i = 1; i <= OPEN_QUESTIONS.length; i++){ const q = db ? await dbGet(DOC.question(i)) : null; if(q) questions[i] = datiStrip(q); }
+  let decisions = [];
+  if(db){ try { const snap = await DOC.decisionsCol().orderBy('createdAt', 'asc').get(); decisions = snap.docs.map(d=>({id:d.id, ...datiStrip(d.data())})); } catch(e){ decisions = []; } }
+  return {
+    schema: DATI_SCHEMA, version: DATI_VERSION, exportedAt: new Date().toISOString(),
+    project: {id: currentProjectId, name: (pase && pase.uznemums) || ''},
+    pase: datiStrip(pase) || {}, applicability: bases.map(datiStrip), calendar: datiStrip(calendar) || {}, wizard: datiStrip(wizard) || {},
+    assets: assets.map(datiStrip), controls: datiMapStrip(controlsCache), questions: questions,
+    techChecks: datiMapStrip(techChecksCache), training: datiMapStrip(trainingCache), policies: datiMapStrip(policiesCache),
+    partners: datiMapStrip(partnersCache), decisions: decisions
+  };
+}
+
+function showCopyBox(text){
+  const b = document.getElementById('dati-copybox'); if(!b) return;
+  b.innerHTML = '<label for="dati-copy-ta">Teksts kopēšanai</label><textarea id="dati-copy-ta" class="mono-ta" readonly></textarea>';
+  document.getElementById('dati-copy-ta').value = text;
+}
+async function saveFile(filename, text){
+  let dl = null;
+  try { dl = await window.claude.use('downloads'); } catch(e){ dl = null; }
+  if(!dl){ showCopyBox(text); datiMsg('Failu saglabāšana šajā skatā nav pieejama — kopē tekstu zemāk.', true); return; }
+  try { await dl.save({filename: filename, data: text}); datiMsg('Fails nosūtīts saglabāšanai: ' + filename); }
+  catch(e){
+    if(e && e.code === 'declined') datiMsg('Saglabāšana atcelta.');
+    else if(e && e.code === 'rate_limited') datiMsg('Mēģini vēlreiz pēc brīža.', true);
+    else { datiMsg('Saglabāt neizdevās — kopē tekstu zemāk.', true); showCopyBox(text); }
+  }
+}
+async function exportProject(){
+  datiMsg('Apkopo datus…');
+  const data = await collectProjectData();
+  await saveFile('nis2-karte-' + datiSlug(data.project.name) + '-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(data, null, 2));
+}
+async function downloadReport(){
+  datiMsg('Veido atskaiti…');
+  const data = await collectProjectData();
+  await saveFile('nis2-atskaite-' + datiSlug(data.project.name) + '-' + new Date().toISOString().slice(0, 10) + '.html', buildReportHtml(data));
+}
+
+function buildReportHtml(d){
+  const e = esc;
+  const today = new Date().toLocaleDateString('lv-LV');
+  const pase = d.pase || {}, ctl = d.controls || {};
+  const st = evidenceStats();
+  const pct = n => st.applicable ? Math.round(n / st.applicable * 100) : 0;
+  const ul = a => a.length ? '<ul>' + a.map(x => '<li>' + x + '</li>').join('') + '</ul>' : '<p>—</p>';
+  const ctlRows = CONTROLS.map(c => {
+    const s = ctl[c.id] || {};
+    const state = evState(s);
+    const ev = s.evidence ? e(s.evidence) + (s.evDate ? ' (' + e(s.evDate) + (s.evOwner ? ', ' + e(s.evOwner) : '') + ')' : ' (nav datuma)') : '—';
+    const label = state === 'ok' ? 'Pierādīts' : state === 'missing' ? 'Nav apstiprināts' : '—';
+    return '<tr><td>' + e(c.cat.toUpperCase()) + '</td><td>' + e(c.text) + '<br><small>' + e(c.ref) + '</small></td><td>' + e(s.compliance || '—') + '</td><td>' + (s.maturity == null ? '—' : e(s.maturity)) + '</td><td>' + ev + '</td><td>' + label + '</td></tr>';
+  }).join('');
+  const verdict = d.wizard && d.wizard.verdictTitle ? e(d.wizard.verdictTitle) + ' — ' + e(d.wizard.verdictReason) + ' (' + e(d.wizard.verdictRef) + ')' : 'Piemērojamības vednis nav pabeigts.';
+  const stLbl = {green: 'apstiprināts', yellow: 'iespējams', red: 'neskaidrs'};
+  const bases = (d.applicability || []).map(b => '<b>' + e(b.title) + '</b> — ' + e(stLbl[b.status] || '') + (b.note ? '. ' + e(b.note) : ''));
+  const assetRows = (d.assets || []).map(a => '<tr><td>' + e(a.name) + '</td><td>' + e(a.owner) + '</td><td>' + e(a.klase || '—') + '</td><td>' + e(a.supplier) + '</td></tr>').join('');
+  const pol = REQUIRED_POLICIES.map(p => e(p.title) + ': ' + e(((d.policies || {})[p.id] || {}).status || 'Nav sākts'));
+  const tech = TECH_CHECKS.map(t => { const s = (d.techChecks || {})[t.id] || {}; return e(t.title) + ': ' + e(s.status || 'Nav veikts') + (s.date ? ' (' + e(s.date) + ')' : ''); });
+  const trn = TRAINING_MODULES.map(t => { const s = (d.training || {})[t.id] || {}; return e(t.title) + ': ' + e(s.status || 'Nav plānots') + (s.date ? ' (' + e(s.date) + ')' : ''); });
+  const missing = CONTROLS.filter(c => evState(ctl[c.id]) === 'missing').map(c => e(c.text));
+  const answered = Object.keys(d.questions || {}).filter(k => d.questions[k] && d.questions[k].answer).length;
+  const limits = [
+    'Atskaite balstīta tikai uz instrumentā ievadītajiem datiem. Tā nav neatkarīgs audits, juridisks atzinums vai NKDC lēmums.',
+    'Statuss "Pierādīts" nozīmē, ka norādīts dokuments un pārbaudes datums; paša dokumenta saturs nav pārbaudīts.',
+    'Kontroļu saraksts ir saīsināts (' + CONTROLS.length + ' punkti), nevis pilns noteikumu klāsts.',
+    'Normatīvā bāze: Nacionālās kiberdrošības likums un MK noteikumi Nr. 397; teksts pārbaudīts 28.09.2026. Nav pārbaudīts, vai MK noteikumi Nr. 397 ir grozīti pēc 2026. gada jūnija likuma grozījumiem.',
+    'Atbildēti ' + answered + ' no ' + OPEN_QUESTIONS.length + ' atklātajiem jautājumiem.'
+  ].map(e);
+  const paseRows = [['Uzņēmums', pase.uznemums], ['Mājaslapa', pase.majaslapa], ['Nozare', pase.nozare], ['Darbinieki', pase.darbinieki], ['Apgrozījums (€)', pase.apgrozijums], ['Bilance (€)', pase.bilance], ['Atbildīgais par projektu', pase.atbildigais]].map(r => '<tr><th>' + e(r[0]) + '</th><td>' + e(r[1] || '—') + '</td></tr>').join('');
+  return '<!DOCTYPE html><html lang="lv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NIS2 atskaite</title><style>' + REPORT_CSS + '</style></head><body>' +
+    '<h1>NIS2 sagatavotības atskaite</h1><p>' + e(pase.uznemums || '') + ' · sagatavota ' + e(today) + '</p>' +
+    '<div class="box"><b>Svarīgi.</b> ' + limits[0] + '</div>' +
+    '<h2>1. Uzņēmums</h2><table>' + paseRows + '</table>' +
+    '<h2>2. Piemērojamība</h2><p>' + verdict + '</p>' + ul(bases) +
+    '<h2>3. Atbilstības kontroles</h2><div class="stats"><div><b>' + pct(st.filled) + '%</b>aizpildīts</div><div><b>' + pct(st.evidenced) + '%</b>pierādīts</div><div><b>' + st.unconfirmed + '</b>nav apstiprināti</div></div>' +
+    '<table><tr><th>Kat.</th><th>Prasība</th><th>Atbilstība</th><th>Briedums (0-5)</th><th>Pierādījums</th><th>Statuss</th></tr>' + ctlRows + '</table>' +
+    '<h2>4. IKT aktīvi</h2>' + (assetRows ? '<table><tr><th>Nosaukums</th><th>Īpašnieks</th><th>Klase</th><th>Piegādātājs</th></tr>' + assetRows + '</table>' : '<p>Nav ievadīts neviens aktīvs.</p>') +
+    '<h2>5. Dokumenti, pārbaudes, apmācības</h2><h3>Politikas</h3>' + ul(pol) + '<h3>Tehniskās pārbaudes</h3>' + ul(tech) + '<h3>Apmācības</h3>' + ul(trn) +
+    '<h2>6. Kas nav apstiprināts un ierobežojumi</h2><h3>Punkti bez pierādījuma</h3>' + ul(missing) + '<h3>Ierobežojumi</h3>' + ul(limits) +
+    '</body></html>';
+}
+
+function datiSanitize(o){
+  if(!o || o.schema !== DATI_SCHEMA) throw new Error('Šis nav šī instrumenta eksporta fails.');
+  if(typeof o.version !== 'number' || o.version > DATI_VERSION) throw new Error('Faila versija ir jaunāka par šī instrumenta versiju.');
+  const S = (v, m) => typeof v === 'string' ? v.slice(0, m || 2000) : '';
+  const D = v => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) ? v : '';
+  const pick = (v, l) => l.includes(v) ? v : null;
+  const obj = v => (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  const arr = v => Array.isArray(v) ? v.slice(0, 500) : [];
+  const idOk = v => typeof v === 'string' && /^[A-Za-z0-9_-]{1,60}$/.test(v);
+  const c = {pase: {}, applicability: [], calendar: {}, wizard: null, assets: [], controls: {}, questions: {}, techChecks: {}, training: {}, policies: {}, partners: {}, decisions: []};
+  const p = obj(o.pase);
+  PASE_FIELDS.forEach(f => { if(typeof p[f[0]] === 'string') c.pase[f[0]] = S(p[f[0]], 500); });
+  arr(o.applicability).forEach(b => { const n = Number(b && b.n); if(Number.isInteger(n) && n > 0 && n < 1000) c.applicability.push({n: n, title: S(b.title, 300), desc: S(b.desc, 3000), ref: S(b.ref, 200), status: pick(b.status, ['green', 'yellow', 'red']) || 'yellow', note: S(b.note, 3000)}); });
+  const cal = obj(o.calendar);
+  ['statusDate', 'nkdcNotifiedDate', 'managerAppointedDate'].forEach(k => { c.calendar[k] = D(cal[k]); });
+  const wz = obj(o.wizard);
+  if(wz.verdict !== undefined || Array.isArray(wz.trail)){
+    c.wizard = {trail: arr(wz.trail).map(t => ({stepId: S(t && t.stepId, 10), kicker: S(t && t.kicker, 100), optText: S(t && t.optText, 500), tag: S(t && t.tag, 20)})), currentId: wz.currentId ? S(wz.currentId, 10) : null, verdict: wz.verdict ? S(wz.verdict, 40) : null, verdictTitle: S(wz.verdictTitle, 300), verdictReason: S(wz.verdictReason, 2000), verdictRef: S(wz.verdictRef, 200)};
+  }
+  arr(o.assets).forEach(a => { if(a && idOk(a.id)) c.assets.push({id: a.id, name: S(a.name, 300), desc: S(a.desc, 3000), owner: S(a.owner, 200), supplier: S(a.supplier, 300), klase: pick(a.klase, ['A', 'B', 'C', 'Nav noteikts']) || '', remote: pick(a.remote, ['Jā', 'Nē', 'Nezinu']) || '', createdAt: Number(a.createdAt) || Date.now()}); });
+  const ctl = obj(o.controls);
+  CONTROLS.forEach(k => { const s = ctl[k.id]; if(!s) return; const m = Number(s.maturity); c.controls[k.id] = {compliance: pick(s.compliance, ['Jā', 'Daļēji', 'Nē', 'N/A']), maturity: (s.maturity != null && Number.isInteger(m) && m >= 0 && m <= 5) ? m : null, note: S(s.note, 2000), evidence: S(s.evidence, 1000), evDate: D(s.evDate), evOwner: S(s.evOwner, 200)}; });
+  const qs = obj(o.questions);
+  OPEN_QUESTIONS.forEach((q, i) => { const s = qs[i + 1]; if(s && typeof s.answer === 'string') c.questions[i + 1] = {answer: S(s.answer, 5000)}; });
+  const tc = obj(o.techChecks);
+  TECH_CHECKS.forEach(t => { const s = tc[t.id]; if(s) c.techChecks[t.id] = {status: pick(s.status, ['Nav veikts', 'Ieplānots', 'Veikts — OK', 'Veikts — problēmas']), result: S(s.result, 2000), date: D(s.date)}; });
+  const tr = obj(o.training);
+  TRAINING_MODULES.forEach(t => { const s = tr[t.id]; if(s) c.training[t.id] = {status: pick(s.status, ['Nav plānots', 'Ieplānots', 'Pabeigts']), date: D(s.date), coverage: S(s.coverage, 50)}; });
+  const pl = obj(o.policies);
+  REQUIRED_POLICIES.forEach(t => { const s = pl[t.id]; if(s) c.policies[t.id] = {status: pick(s.status, ['Nav sākts', 'Melnraksts', 'Apstiprināšanā', 'Apstiprināts']), draft: S(s.draft, 30000), version: (Number.isInteger(s.version) && s.version >= 0) ? s.version : 0}; });
+  const pt = obj(o.partners);
+  PARTNER_CATEGORIES.forEach(t => { const s = pt[t.id]; if(s) c.partners[t.id] = {name: S(s.name, 300), contact: S(s.contact, 300), note: S(s.note, 1000)}; });
+  arr(o.decisions).forEach(x => { if(x && idOk(x.id)) c.decisions.push({id: x.id, decision: S(x.decision, 1000), rationale: S(x.rationale, 3000), createdAt: Number(x.createdAt) || Date.now()}); });
+  const counts = 'kontroles ' + Object.keys(c.controls).length + ', aktīvi ' + c.assets.length + ', politikas ' + Object.keys(c.policies).length + ', tehniskās pārbaudes ' + Object.keys(c.techChecks).length + ', apmācības ' + Object.keys(c.training).length + ', lēmumi ' + c.decisions.length;
+  return {clean: c, counts: counts, name: c.pase.uznemums || '', exportedAt: S(o.exportedAt, 40)};
+}
+
+async function datiPreview(){
+  const raw = document.getElementById('dati-import-text').value.trim();
+  const out = document.getElementById('dati-import-preview');
+  out.innerHTML = ''; datiPending = null;
+  if(!raw){ datiMsg('Ielīmē vai izvēlies JSON failu.', true); return; }
+  let obj; try { obj = JSON.parse(raw); } catch(e){ datiMsg('Fails nav derīgs JSON.', true); return; }
+  let res; try { res = datiSanitize(obj); } catch(e){ datiMsg(e.message, true); return; }
+  datiPending = res.clean;
+  out.innerHTML = '<p class="ev-note"><b>' + esc(res.name || '(bez nosaukuma)') + '</b>, eksportēts ' + esc(res.exportedAt || '?') + '. Ieraksti: ' + esc(res.counts) + '. Imports pārrakstīs šī projekta ierakstus ar tiem pašiem ID. Pirms tam ieteicams izveidot eksportu.</p><button type="button" class="btn" id="dati-import-apply">Apstiprināt importu</button>';
+  document.getElementById('dati-import-apply').addEventListener('click', datiApply);
+  datiMsg('Fails pārbaudīts. Pārskati kopsavilkumu un apstiprini.');
+}
+async function datiApply(){
+  if(!datiPending) return;
+  const c = datiPending; datiPending = null;
+  datiMsg('Importē…');
+  let ok = true;
+  const w = async (ref, data) => { if(!(await dbSet(ref, data))) ok = false; };
+  await w(DOC.pase(), c.pase);
+  for(const b of c.applicability){ const {n, ...rest} = b; await w(DOC.applicability(n), rest); }
+  await w(pdoc('applicability/_index'), {ids: c.applicability.map(b => b.n)});
+  await w(DOC.calendarBase(), c.calendar);
+  if(c.wizard) await w(DOC.wizardState(), c.wizard);
+  for(const a of c.assets){ const {id, ...rest} = a; await w(DOC.asset(id), rest); }
+  for(const id of Object.keys(c.controls)) await w(DOC.control(id), c.controls[id]);
+  for(const n of Object.keys(c.questions)) await w(DOC.question(n), c.questions[n]);
+  for(const id of Object.keys(c.techChecks)) await w(DOC.techCheck(id), c.techChecks[id]);
+  for(const id of Object.keys(c.training)) await w(DOC.trainingItem(id), c.training[id]);
+  for(const id of Object.keys(c.policies)) await w(DOC.policy(id), c.policies[id]);
+  for(const id of Object.keys(c.partners)) await w(pdoc('partners/' + id), c.partners[id]);
+  for(const x of c.decisions){ const {id, ...rest} = x; await w(pdoc('decisions/' + id), rest); }
+  await renderAll();
+  await updateTechProgress(); await updateTrainingProgress(); await updatePoliciesProgress();
+  datiMsg(ok ? 'Imports pabeigts.' : 'Imports pabeigts ar kļūdām — skaties saglabāšanas statusu augšā.', !ok);
+}
+
+async function renderDati(){
+  const el = document.getElementById('view-dati');
+  el.innerHTML =
+    '<div class="card"><div class="section-title">Atskaite</div><p class="hint">Atskaite tiek saglabāta kā HTML fails, ko var atvērt pārlūkā un izdrukāt vai saglabāt kā PDF. Tajā ir tikai šajā instrumentā ievadītie dati, un tā skaidri norāda, kas nav apstiprināts.</p><button type="button" class="btn" id="dati-report-btn">Lejupielādēt atskaiti (HTML)</button></div>' +
+    '<div class="card"><div class="section-title">Rezerves kopija</div><p class="hint">Eksportē visu šī projekta saturu JSON failā. Eksportā nav lietotāju identifikatoru.</p><button type="button" class="btn ghost" id="dati-export-btn">Eksportēt projektu (JSON)</button></div>' +
+    '<div class="card edit-only"><div class="section-title">Imports</div><p class="hint">Izvēlies iepriekš eksportētu failu vai ielīmē tā saturu. Pirms rakstīšanas tiks parādīts kopsavilkums, un nepieciešams apstiprinājums.</p>' +
+    '<div class="field"><label for="dati-file">JSON fails</label><input type="file" id="dati-file" accept=".json,application/json"></div>' +
+    '<div class="field"><label for="dati-import-text">vai ielīmē saturu</label><textarea id="dati-import-text" class="mono-ta"></textarea></div>' +
+    '<button type="button" class="btn ghost" id="dati-preview-btn">Pārbaudīt failu</button><div id="dati-import-preview" style="margin-top:16px;"></div></div>' +
+    '<p id="dati-status" role="status" aria-live="polite" class="hint"></p><div id="dati-copybox"></div>';
+  document.getElementById('dati-report-btn').addEventListener('click', downloadReport);
+  document.getElementById('dati-export-btn').addEventListener('click', exportProject);
+  document.getElementById('dati-preview-btn').addEventListener('click', datiPreview);
+  document.getElementById('dati-file').addEventListener('change', function(ev){
+    const f = ev.target.files && ev.target.files[0]; if(!f) return;
+    if(f.size > 5 * 1024 * 1024){ datiMsg('Fails ir pārāk liels (virs 5 MB).', true); return; }
+    const r = new FileReader();
+    r.onload = function(){ document.getElementById('dati-import-text').value = String(r.result || ''); datiMsg('Fails ielādēts. Nospied "Pārbaudīt failu".'); };
+    r.onerror = function(){ datiMsg('Failu nevarēja nolasīt.', true); };
+    r.readAsText(f);
+  });
+}
+
+/* ============================================================
+   Normatīvā bāze: which legal sources the tool relies on, what was
+   actually read, what is still unverified
+   ============================================================ */
+const NORMS = [
+  {id:'nkdl', title:'Nacionālās kiberdrošības likums (NKDL)', url:'https://likumi.lv/ta/id/353390-nacionalas-kiberdrosibas-likums', scope:'Kas ir tvērumā, vadības pienākumi, uzraudzība, sodi', version:'Redakcija ar grozījumiem 04.06.2026; grozījumi 18.06.2026 un 01.10.2026 (20. p. 11. d.)', read:'28.09.2026', badge:'green', status:'Pārlasīts avotā'},
+  {id:'mk397', title:'MK noteikumi Nr. 397 "Minimālās kiberdrošības prasības"', url:'https://likumi.lv/ta/id/361481-minimalas-kiberdrosibas-prasibas', scope:'Dokumenti, sistēmu klases A/B/C, žurnāli, rezerves kopijas, incidenti, pašnovērtējums', version:'Pieņemti 25.06.2025, spēkā no 02.07.2025', read:'28.09.2026', badge:'orange', status:'Jāpārbauda grozījumi', note:'Lapā nebija redzamu atzīmju par grozījumiem pēc 18.06.2026; nav apstiprināts, ka redakcija ir aktuāla.'},
+  {id:'nis2', title:'Direktīva (ES) 2022/2555 (NIS2)', url:'https://eur-lex.europa.eu/eli/dir/2022/2555/oj', scope:'Pamats Art. 21 kategorijām', version:'—', read:'', badge:'grey', status:'Nav pārbaudīts šajā instrumentā', note:'Latvijas prasības balstītas uz NKDL un MK noteikumiem Nr. 397.'},
+  {id:'reg2690', title:'Īstenošanas regula (ES) 2024/2690', url:'https://eur-lex.europa.eu/eli/reg_impl/2024/2690/oj', scope:'Digitālo pakalpojumu sniedzēju tehniskās prasības (MK not. Nr. 397 6. p.)', version:'—', read:'', badge:'grey', status:'Nav pārbaudīts šajā instrumentā', note:'Instrumenta kontroļu sarakstā nav iekļauta.'},
+  {id:'dora', title:'Regula (ES) 2022/2554 (DORA)', url:'https://eur-lex.europa.eu/eli/reg/2022/2554/oj', scope:'Finanšu iestādes; ietekmē NKDL piemērošanu', version:'—', read:'', badge:'grey', status:'Nav pārbaudīts šajā instrumentā', note:'Piemērojamības vednis to neapstrādā.'}
+];
+const NORM_OPEN = [
+  'Vai uzņēmuma lielumu rēķina kopā ar saistītajiem uzņēmumiem (NKDL 1. pants agregāciju nenosaka).',
+  'Kā skaitīt darbiniekus: vidējais skaits, pilna laika ekvivalents vai konkrēts datums.',
+  'Nozaru termini (piem., enerģētika, ārstniecības iestāde) ir definēti citos likumos un vednī nav precizēti.',
+  'Kā tiek noteikts, ka komercsabiedrība ir nozīmīga nacionālajai drošībai (grozījumi no 01.10.2026).',
+  'Vai SaaS pakalpojums ir mākoņpakalpojums NKDL izpratnē.',
+  'Vai MK noteikumi Nr. 397 ir grozīti pēc 2026. gada jūnija likuma grozījumiem.',
+  'Kā tieši skaita trīs gadu pašnovērtējuma ciklu.',
+  'Vai kompetentajām iestādēm ir oficiāls pašnovērtējuma tests (minēts tikai latviešu valodā).'
+];
+
+async function renderNormas(){
+  const el = document.getElementById('view-normas');
+  const saved = {};
+  if(db){ for(const n of NORMS){ const d = await dbGet(pdoc('norms/' + n.id)); if(d) saved[n.id] = d; } }
+  const rows = NORMS.map(n => {
+    const s = saved[n.id] || {};
+    return '<tr><td><strong>' + esc(n.title) + '</strong><br><a class="norm-link" href="' + esc(n.url) + '" target="_blank" rel="noopener">Atvērt avotu</a></td>' +
+      '<td>' + esc(n.scope) + (n.note ? '<br><small>' + esc(n.note) + '</small>' : '') + '</td>' +
+      '<td>' + esc(n.version) + '</td>' +
+      '<td><span class="badge ' + n.badge + '">' + esc(n.status) + '</span>' + (n.read ? '<br><small>Pārlasīts izstrādes laikā: ' + esc(n.read) + '</small>' : '') + '</td>' +
+      '<td><input type="date" data-nid="' + n.id + '" data-role="date" value="' + esc(s.date || '') + '" aria-label="Jūsu pārbaudes datums"><input type="text" data-nid="' + n.id + '" data-role="by" value="' + esc(s.by || '') + '" placeholder="Pārbaudīja" aria-label="Pārbaudīja"></td></tr>';
+  }).join('');
+  el.innerHTML =
+    '<div class="card"><div class="section-title">Normatīvā bāze</div><p class="hint">Uz kādiem tiesību aktiem balstīts instrumenta saturs, kas ir pārlasīts avotā un kas nav. Kolonna "Jūsu pārbaude" ir vieta, kur piefiksēt savu pārbaudi pirms atskaites vai tendera izmantošanas.</p>' +
+    '<div style="overflow-x:auto"><table><thead><tr><th>Avots</th><th>Ko aptver</th><th>Redakcija</th><th>Statuss</th><th>Jūsu pārbaude</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>' +
+    '<div class="card"><div class="section-title">Neatrisināti jautājumi</div><p class="hint">Punkti, kurus instruments nevar izlemt pats un kuros rezultāts jāpārbauda ar juristu vai NKDC.</p><ul>' + NORM_OPEN.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>';
+  el.querySelectorAll('input[data-nid]').forEach(inp => {
+    let t;
+    inp.addEventListener('input', () => {
+      clearTimeout(t);
+      t = setTimeout(async () => {
+        if(db) await dbUpdate(pdoc('norms/' + inp.dataset.nid), {[inp.dataset.role]: inp.value, _updatedAt: Date.now(), _updatedBy: myId});
+      }, 600);
+    });
+  });
+}
+
+async function renderAll(){
+  await renderVednis();
+  await renderPase();
+  await renderPiemerojamiba();
+  await renderKalendars();
+  await renderAktivi();
+  await renderGap();
+  await renderTehniskie();
+  await renderApmacibas();
+  await renderPolitikas();
+  await renderJautajumi();
+  await renderPlans();
+  await renderZurnals();
+  await renderPartneri();
+  await renderDati();
+  await renderNormas();
+  await renderCelvedis();
+}
+
+initCapabilities().then(renderProjectPicker);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NIS2 LV — Kiberdrošības atbilstības instruments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+--ink:#FAFAFA;--ink-soft:#A1A1AA;--paper:#09090B;--paper-dim:#27272A;--line:#3F3F46;
+--brass:#DFE104;--brass-dim:#27272A;--green:#DFE104;--green-bg:#27272A;--orange:#FAFAFA;--orange-bg:#27272A;
+--red:#A1A1AA;--red-bg:#27272A;--grey:#A1A1AA;--accent:#DFE104;
+font-family:'Space Grotesk','Inter',system-ui,sans-serif;box-sizing:border-box;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;border-radius:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-weight:500;line-height:1.45;font-size:clamp(1rem,.92rem + .3vw,1.2rem);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--paper);z-index:60}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.03;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+::selection{background:var(--accent);color:#000}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+h1,h2,h3,.serif,.section-title,.verdict,.q-title{font-family:inherit;font-weight:700;text-transform:uppercase;letter-spacing:-.04em;line-height:.95;margin:0}
+.mono{font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+[style*="border-radius:50%"]{border-radius:0!important}
+.hidden{display:none!important}
+
+/* header + tabs */
+header.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 16px;padding:14px clamp(14px,2.5vw,40px);border-bottom:2px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);z-index:30}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand .mark{font-size:1.5rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:-.04em}
+.brand .sub{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);font-weight:700}
+.presence{display:flex;gap:8px;align-items:center;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--ink-soft)}
+.presence .dot,.sync-note .dot{width:10px;height:10px;background:var(--accent);display:inline-block}
+.tabs{display:flex;gap:4px;overflow-x:auto;flex:1 1 100%;order:3;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.top nav{display:flex;gap:4px}
+.tab,.top nav a{font-family:inherit;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;min-height:44px;padding:0 16px;display:inline-flex;align-items:center;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none}
+.tab:hover,.top nav a:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab.active,.top nav a.active{background:var(--accent);border-color:var(--accent);color:#000}
+
+/* marquee strip (incident deadlines) */
+.marquee{overflow:hidden;background:var(--accent);color:#000}
+.marquee-track{display:flex;width:max-content;animation:mq 28s linear infinite}
+.marquee-group{display:flex;flex-shrink:0;align-items:center}
+.marquee-group span{padding:10px 28px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.marquee-group span::after{content:"\2726";margin-left:56px}
+@keyframes mq{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+main{max-width:min(95vw,1280px);margin:0 auto;padding:clamp(24px,4vw,56px) clamp(14px,2.5vw,32px) 120px}
+.view{display:none}.view.active{display:block}
+.card{border:2px solid var(--line);background:var(--paper);padding:clamp(20px,3vw,40px);margin-bottom:24px}
+.section-title{font-size:clamp(1.6rem,3.6vw,3.2rem);margin:0 0 20px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.hint{color:var(--ink-soft);font-size:1rem;line-height:1.5;max-width:68ch;margin:0 0 20px}
+#view-vednis h3{font-size:clamp(1.4rem,2.6vw,2.4rem)!important;line-height:1!important}
+
+/* buttons */
+.btn{font-family:inherit;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:-.01em;padding:0 26px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--accent);background:var(--accent);color:#000;cursor:pointer;transition:transform .2s ease-in-out,background-color .2s,color .2s}
+.btn:hover{transform:scale(1.05)}.btn:active{transform:scale(.95)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:none}
+.btn.small{padding:0 16px;font-size:.72rem;min-height:44px}
+.btn.ai{background:transparent;color:var(--accent);border-color:var(--accent)}
+.btn.ai:hover{background:var(--accent);color:#000;transform:none}
+.btn:disabled{opacity:.5;pointer-events:none}
+.skip{background:none;border:0;color:var(--ink-soft);font-family:inherit;font-weight:700;text-transform:uppercase;font-size:.75rem;letter-spacing:.1em;text-decoration:underline;cursor:pointer;min-height:44px}
+
+/* forms */
+input[type=text],input[type=number],input[type=date],select{font-family:inherit;font-size:1rem;font-weight:500;min-height:48px;padding:10px 2px;width:100%;border:0;border-bottom:2px solid var(--line);background:transparent;color:var(--ink)}
+textarea{font-family:inherit;font-size:1rem;font-weight:500;width:100%;min-height:72px;padding:12px;border:2px solid var(--line);background:transparent;color:var(--ink);resize:vertical}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+::placeholder{color:#71717A}
+label{display:block;margin-bottom:6px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft)}
+.field{margin-bottom:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* tables */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);padding:10px 8px;border-bottom:2px solid var(--ink)}
+td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:hover td{background:var(--paper-dim)}
+
+/* badges (status is also carried by the label text) */
+.badge,.result-badge,.crumb{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:2px solid var(--line);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.badge.green,.result-badge.green{background:var(--accent);border-color:var(--accent);color:#000}
+.badge.orange,.result-badge.orange{border-color:var(--accent);color:var(--accent)}
+.badge.red,.result-badge.red{border-color:var(--ink);color:var(--ink)}
+.badge.grey{color:var(--ink-soft)}
+.result-badge{padding:9px 18px;font-size:.8rem;margin-bottom:20px}
+.result-badge .dotc{width:10px;height:10px;background:currentColor}
+.pill-row,.trail{display:flex;gap:6px;flex-wrap:wrap}
+.trail{display:none;margin-bottom:24px}.trail.show{display:flex}
+
+/* heat grid */
+.heatgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1px;background:var(--line);border:2px solid var(--line);margin-bottom:28px}
+.heatcell{background:var(--paper);padding:16px;cursor:pointer;transition:background-color .2s,color .2s}
+.heatcell:hover,.heatcell.sel{background:var(--accent);color:#000}
+.heatcell .cn,.heatcell .cat-name{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;min-height:2.8em;margin-bottom:8px}
+.heatcell .num,.heatcell .cat-num{font-size:clamp(2rem,3.5vw,3.2rem);font-weight:700;letter-spacing:-.05em;line-height:1}
+.heatcell .bar,.heatcell .cat-bar{height:6px;background:var(--line);margin-top:10px;position:relative;overflow:hidden}
+.heatcell .bar i,.heatcell .cat-bar i{position:absolute;left:0;top:0;bottom:0}
+.heatcell:hover :is(.num,.cat-num,.cat-warn),.heatcell.sel :is(.num,.cat-num,.cat-warn){color:#000!important}
+.heatcell:hover :is(.bar,.cat-bar),.heatcell.sel :is(.bar,.cat-bar){background:rgba(0,0,0,.25)}
+.heatcell:hover :is(.bar,.cat-bar) i,.heatcell.sel :is(.bar,.cat-bar) i{background:#000!important}
+.cat-warn{font-size:.7rem;margin-top:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+/* segmented controls */
+.seg{display:flex;border:2px solid var(--line);flex-wrap:wrap}
+.seg button{font-family:inherit;font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;min-height:44px;padding:0 14px;border:0;border-right:1px solid var(--line);background:transparent;color:var(--ink-soft);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button:hover{background:var(--ink);color:var(--paper)}
+.seg button.on{background:var(--accent);color:#000}
+.seg button.on.na{background:var(--ink-soft)}
+.mat-row,.mat-select{display:flex;gap:4px}
+.mat-dot{width:44px;height:44px;border:2px solid var(--line);background:transparent;font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mat-dot:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mat-dot.on{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+
+/* AI box, misc */
+.ai-box{display:none;border:2px solid var(--accent);background:var(--paper-dim);padding:16px;margin-top:12px;font-size:.95rem;line-height:1.5}
+.ai-box.show{display:block}
+.ai-box .lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:8px}
+.who{font-size:.72rem;color:var(--ink-soft);margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.empty-state{color:var(--ink-soft);padding:24px 0}
+.sync-note{font-size:.75rem;color:var(--ink-soft);display:flex;align-items:center;gap:8px;margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+
+/* read-only (management) view */
+body.readonly .edit-only{display:none!important}
+body.readonly input,body.readonly textarea{border-color:transparent;background:transparent;padding-left:0;pointer-events:none;color:var(--ink)}
+body.readonly input::placeholder,body.readonly textarea::placeholder{color:transparent}
+body.readonly .seg button,body.readonly .mat-dot{pointer-events:none}
+body.readonly .seg button:not(.on),body.readonly .mat-dot:not(.on){opacity:.35}
+.readonly-banner{display:none;background:var(--ink);color:#000;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:10px clamp(14px,2.5vw,32px);text-align:center}
+body.readonly .readonly-banner{display:block}
+body.readonly #readonly-toggle{background:var(--ink);color:var(--paper)}
+
+/* free-check wizard pieces */
+.intro{margin-bottom:48px}
+.intro h1{font-size:clamp(2.5rem,9vw,8rem);line-height:.88;letter-spacing:-.05em;margin:0 0 24px}
+.intro p{color:var(--ink-soft);max-width:44rem;font-size:clamp(1.05rem,1vw + .7rem,1.4rem);margin:0 0 12px}
+.intro .flagline{display:inline-flex;margin-top:16px;border:2px solid var(--accent);color:var(--accent);padding:6px 14px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.rail{display:flex;align-items:center;margin:0 0 36px;overflow-x:auto}
+.rail .node{display:flex;align-items:center;flex-shrink:0}
+.rail .dot{width:40px;height:40px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--ink-soft);background:var(--paper);flex-shrink:0}
+.rail .dot.done{background:var(--accent);border-color:var(--accent);color:#000}
+.rail .dot.now{border-color:var(--accent);color:var(--accent)}
+.rail .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--ink-soft);margin-left:10px;white-space:nowrap}
+.rail .label.now{color:var(--ink)}
+.rail .seg{display:block;width:36px;height:2px;border:0;background:var(--line);margin:0 12px;flex-shrink:0}
+.q-kicker{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.q-title{font-size:clamp(1.6rem,3.6vw,3rem);line-height:.98;margin-bottom:14px}
+.q-why{color:var(--ink-soft);max-width:62ch;margin:0 0 24px;line-height:1.5}
+.q-why .ref,.verdict-sub .ref,.chain .ref,.cref,.ref{font-family:'IBM Plex Mono',monospace;font-size:.8em;color:var(--ink-soft)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:16px;text-align:left;width:100%;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:18px 20px;min-height:56px;font-family:inherit;font-weight:700;font-size:clamp(1rem,1.2vw + .5rem,1.25rem);cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+.opt:hover{background:var(--accent);border-color:var(--accent);color:#000}
+.opt .letter{font-family:'IBM Plex Mono',monospace;color:var(--accent);width:24px;flex-shrink:0;text-transform:uppercase}
+.opt:hover .letter{color:#000}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:26px}
+.verdict{font-size:clamp(2rem,6vw,5rem);line-height:.92;margin:0 0 14px}
+.verdict-sub{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;line-height:1.5}
+.chain{border-left:4px solid var(--accent);padding-left:22px;margin:26px 0 32px}
+.chain .step{margin-bottom:16px;position:relative}
+.chain .step::before{content:"";position:absolute;left:-30px;top:8px;width:10px;height:10px;background:var(--accent)}
+.flags{display:flex;flex-direction:column;gap:8px;margin-bottom:32px}
+.flag{display:flex;gap:10px;padding:14px 16px;border:2px solid var(--line);font-size:.9rem;line-height:1.5;color:var(--ink-soft)}
+.flag b{color:var(--ink)}
+.cta-row{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+.controls-panel{border:2px solid var(--line);margin-bottom:32px}
+.controls-panel .ph{padding:16px 20px;border-bottom:2px solid var(--line);background:var(--paper-dim);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.controls-panel .ph h3{font-size:1.3rem}
+.control-row{padding:16px 20px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center}
+.control-row:last-child{border-bottom:0}
+.control-row .ctext .cref{display:block;margin-top:4px}
+@media(max-width:700px){.control-row{grid-template-columns:1fr}}
+.priority-list{list-style:none;padding:0;margin:0 0 32px}
+.priority-list li{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.priority-list .rank{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-weight:700;font-size:1.3rem;flex-shrink:0;width:40px}
+.priority-list .owner{display:inline-block;margin-top:6px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);border:2px solid var(--line);padding:2px 8px}
+footer.disclaimer{border-top:2px solid var(--line);margin:60px auto 0;padding:28px clamp(14px,2.5vw,40px) 44px;font-size:.85rem;color:var(--ink-soft);line-height:1.6;max-width:min(95vw,1280px)}
+
+@media (prefers-reduced-motion:reduce){
+.marquee-track{animation:none;width:auto;flex-wrap:wrap}
+.marquee-group[aria-hidden="true"]{display:none}
+.btn:hover,.btn:active{transform:none}
+*{transition-duration:.01ms!important}}
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark">NIS2·LV</span>
+    <span class="sub">Instruments atbilstības novērtējumam</span>
+  </div>
+  <nav>
+    <a href="#" id="nav-scope" class="active">1. Piemērojamība</a>
+    <a href="#" id="nav-gap">2. Novērtējums</a>
+  </nav>
+</header>
+<div class="marquee" role="group" aria-label="Ziņošanas termiņi par nozīmīgiem kiberincidentiem"><div class="marquee-track"><div class="marquee-group"><span>Nozīmīgs incidents: agrīnais brīdinājums ≤ 24 h</span><span>Sākotnējais ziņojums ≤ 72 h</span><span>Galaziņojums — 1 mēnesis pēc sākotnējā ziņojuma</span><span>MK noteikumi Nr. 397</span></div><div class="marquee-group" aria-hidden="true"><span>Nozīmīgs incidents: agrīnais brīdinājums ≤ 24 h</span><span>Sākotnējais ziņojums ≤ 72 h</span><span>Galaziņojums — 1 mēnesis pēc sākotnējā ziņojuma</span><span>MK noteikumi Nr. 397</span></div></div></div>
+
+<main>
+
+<!-- ============ SCOPE WIZARD VIEW ============ -->
+<section id="view-scope">
+
+  <div class="intro" id="scope-intro">
+    <h1>Vai jūsu organizācijai piemēro NIS2 prasības Latvijā?</h1>
+    <p>Bezmaksas pārbaude — atbildes netiek saglabātas, viss notiek jūsu pārlūkā. Balstīts uz Nacionālās kiberdrošības likumu (redakcija ar grozījumiem no 04.06.2026) un MK noteikumiem Nr. 397. Atbildiet uz jautājumiem — instruments izskaidros pamatojumu ar atsaucēm uz konkrētiem pantiem.</p>
+    <span class="flagline">● Pārbaudīts 28.09.2026 · likums mainās, skatiet piezīmi lapas beigās</span>
+  </div>
+
+  <div class="rail" id="rail"></div>
+
+  <div class="trail" id="trail"></div>
+
+  <div id="q-area"></div>
+
+  <div id="result-area" class="hidden"></div>
+
+</section>
+
+<!-- ============ GAP ASSESSMENT VIEW ============ -->
+<section id="view-gap" class="hidden">
+
+  <div class="intro">
+    <h1>Prasību izpildes novērtējums</h1>
+    <p id="gap-status-line">Statuss: <strong>vēl nav noteikts</strong>. Iesakām vispirms pabeigt piemērojamības noteikšanu — no tā atkarīgs, kuras prasības tiek rādītas.</p>
+  </div>
+
+  <div class="heatgrid" id="heatgrid"></div>
+
+  <div id="controls-area"></div>
+
+  <div class="section-title">Prioritārā rīcības plāna melnraksts</div>
+  <ol class="priority-list" id="priority-list"></ol>
+
+  <div class="cta-row">
+    <button class="btn ghost" id="btn-back-scope">← Atpakaļ uz piemērojamību</button>
+  </div>
+
+</section>
+
+</main>
+
+<footer class="disclaimer">
+  <strong>Par prototipu.</strong> Šis ir demonstrācijas prototips ar ierobežotu prasību kopu (pilnā versijā — ap 50 kontroles punktu 10 kategorijās). Rezultāts ir pašnovērtējums, nevis juridisks atzinums un nevis NKDC lēmums — saskaņā ar likuma 22. panta 5. daļu NKDC var pieņemt citu lēmumu. Likums groza regulāri (pēdējie grozījumi stājās spēkā 18.06.2026, nākamie — 01.10.2026); pirms lēmumu pieņemšanas pārbaudiet aktuālo redakciju likumi.lv un konsultējieties ar juristu.
+</footer>
+
+<script>
+/* =======================================================================
+   DATA MODEL
+   ======================================================================= */
+
+const RULES_STEPS = [
+  {id:'A1', block:'A', kicker:'Jurisdikcija · 1/9', title:'Kur organizācija ir reģistrēta?',
+   why:'NKDL nosaka, ka likums piemērojams organizācijām, kas reģistrētas Latvijā, vai ārpus ES reģistrētiem subjektiem ar pārstāvi Latvijā.', ref:'NKDL 3. p.',
+   type:'single',
+   opts:[
+     {t:'Latvijā', next:'B1'},
+     {t:'Citā ES dalībvalstī', next:'A2'},
+     {t:'Ārpus ES, ir pārstāvis Latvijā', next:'A3'},
+     {t:'Ārpus ES, pārstāvja Latvijā nav', next:null, out:{verdict:'out', title:'Ārpus tvēruma', reason:'Organizācijas bez pārstāvja Latvijā, kas reģistrētas ārpus ES, likuma tvērumā neietilpst.', ref:'NKDL 3. p. 7. d.'}}
+   ]},
+  {id:'A2', block:'A', kicker:'Jurisdikcija · 2/9', title:'Vai Latvijā sniedzat tikai digitālos pakalpojumus (DNS/TLD, mākonis, CDN, tirdzniecības vieta u.tml.) un jums nav cita veida pakalpojumu vai IKT kritiskās infrastruktūras šeit?',
+   why:'Digitālo pakalpojumu sniedzējiem ES ietvaros var piemērot tikai vienas dalībvalsts uzraudzību — tur, kur pieņem galvenos lēmumus par kiberrisku pārvaldību.', ref:'NKDL 3. p. 6., 8. d.',
+   type:'single',
+   opts:[
+     {t:'Jā, tikai digitālie pakalpojumi', next:'A3'},
+     {t:'Nē, ir arī cita veida darbība Latvijā', next:'B1'}
+   ]},
+  {id:'A3', block:'A', kicker:'Jurisdikcija · 3/9', title:'Kur tiek pieņemti galvenie lēmumi par kiberrisku pārvaldību?',
+   why:'Nosaka, kuras valsts uzraudzības iestāde ir kompetenta.', ref:'NKDL 3. p. 6., 8. d.',
+   type:'single',
+   opts:[
+     {t:'Latvijā', next:'B1'},
+     {t:'Citā ES dalībvalstī', next:null, out:{verdict:'out-lv', title:'Uzraudzība citā ES valstī', reason:'Ja galvenie lēmumi par kiberrisku pārvaldību tiek pieņemti citā ES dalībvalstī, uzraudzība notiek tur, nevis Latvijā.', ref:'NKDL 3. p. 6. d.'}},
+     {t:'Nezinu', next:null, out:{verdict:'unclear', title:'Nepieciešams noskaidrot', reason:'Bez skaidrības par lēmumu pieņemšanas vietu nav iespējams noteikt piemērojamo jurisdikciju.', ref:'NKDL 3. p. 6., 8. d.'}}
+   ]},
+  {id:'B1', block:'B', kicker:'Organizācijas veids · 4/9', title:'Kāds ir jūsu organizācijas veids?',
+   why:'Dažām publiskā sektora un infrastruktūras organizācijām statuss "būtisks" tiek piešķirts neatkarīgi no nozares vai lieluma.', ref:'NKDL 20. p. 5.–7., 10. d.',
+   type:'single',
+   opts:[
+     {t:'Tiešās pārvaldes vai cita valsts iestāde (izņemot drošības dienestus)', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Valsts tiešās pārvaldes un citas valsts iestādes (izņemot drošības dienestus) ir būtiski pakalpojumu sniedzēji neatkarīgi no lieluma vai nozares.', ref:'NKDL 20. p. 5. d.'}},
+     {t:'Atvasināta publiska persona (t.sk. pašvaldība)', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Atvasinātas publiskas personas, tostarp pašvaldības, ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 6. d.'}},
+     {t:'Publisks elektroniskais plašsaziņas līdzeklis', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Publiskie elektroniskie plašsaziņas līdzekļi ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 7. d.'}},
+     {t:'Pastarpinātās pārvaldes iestāde', next:'D1'},
+     {t:'Privāts uzņēmums / pašnodarbinātais', next:'C1'}
+   ]},
+  {id:'C1', block:'C', kicker:'Īpašās kategorijas · 5/9', title:'Vai sniedzat kādu no šiem pakalpojumiem?', sub:'Šīm kategorijām statuss noteikts neatkarīgi no uzņēmuma lieluma.',
+   why:'Likums šīm darbībām piešķir īpašu statusu bez lieluma testa.', ref:'NKDL 20. p. 1.–4. d., 21. p. 1. d. 5., 6. pk.',
+   type:'single',
+   opts:[
+     {t:'Augstākā līmeņa domēna (piem., .lv) reģistrs', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'TLD reģistri ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 1. d.'}},
+     {t:'DNS pakalpojumi', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'DNS pakalpojumu sniedzēji ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 2. d.'}},
+     {t:'Elektronisko sakaru komersants', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Elektronisko sakaru komersanti ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 3. d.'}},
+     {t:'Kvalificēts uzticamības pakalpojumu sniedzējs', next:null, out:{verdict:'essential', title:'Būtiska pakalpojuma sniedzējs', reason:'Kvalificēti uzticamības pakalpojumu sniedzēji ir būtiski pakalpojumu sniedzēji.', ref:'NKDL 20. p. 4. d.'}},
+     {t:'Nekvalificēts uzticamības pakalpojumu sniedzējs', next:null, out:{verdict:'important', title:'Svarīga pakalpojuma sniedzējs', reason:'Nekvalificēti uzticamības pakalpojumu sniedzēji ir svarīgi pakalpojumu sniedzēji.', ref:'NKDL 21. p. 1. d. 6. pk.'}},
+     {t:'Izglītības informācijas sistēma', next:null, out:{verdict:'important', title:'Svarīga pakalpojuma sniedzējs', reason:'Izglītības informācijas sistēmas nodrošinātāji ir svarīgi pakalpojumu sniedzēji.', ref:'NKDL 21. p. 1. d. 5. pk.'}},
+     {t:'Nekas no minētā', next:'D1'}
+   ]},
+  {id:'D1', block:'D', kicker:'Nozare · 6/9', title:'Kurā nozaru grupā darbojas organizācija?',
+   why:'Likuma pielikumi nosaka divas nozaru grupas ar dažādu lieluma slieksni.', ref:'NKDL 20. p. 8. d., 21. p. 1. d. 1.–2. pk.',
+   type:'single',
+   opts:[
+     {t:'Enerģētika, transports, banku, veselības, ūdens, digitālā infrastruktūra, kosmoss u.tml. (grupa "E")', next:'D2', tag:'E'},
+     {t:'Pasts, ķīmija, pārtika, ražošana, tiešsaistes tirgi, pētniecība, apsardze (grupa "I")', next:'D2', tag:'I'},
+     {t:'Nekas no minētā', next:'D3', tag:'none'}
+   ]},
+  {id:'D2', block:'D', kicker:'Lielums · 7/9', title:'Kāds ir organizācijas lielums?', sub:'Balstoties uz pēdējo pārskata gadu.',
+   why:'"E" grupas nozarēs lielie ir būtiski, vidējie — svarīgi. "I" grupas nozarēs gan vidējie, gan lielie ir svarīgi.', ref:'NKDL 1. p. 16., 25. d.',
+   type:'single',
+   opts:[
+     {t:'Liels (≥250 darbinieku VAI apgrozījums >50M€ VAI bilance >43M€)', next:'D3', tag:'large'},
+     {t:'Vidējs (≤249 darbinieku UN apgrozījums 10–50M€ vai bilance 10–43M€)', next:'D3', tag:'medium'},
+     {t:'Mazs', next:'D3', tag:'small'}
+   ]},
+  {id:'D3', block:'D', kicker:'Papildu kritēriji · 8/9', title:'Vai esat vienīgais šāda veida pakalpojuma sniedzējs Latvijā?',
+   why:'Vienīgajam pakalpojuma sniedzējam nozarē statuss piemērojams neatkarīgi no lieluma.', ref:'NKDL 20. p. 9. d., 21. p. 1. d. 3. pk.',
+   type:'single',
+   opts:[
+     {t:'Jā', next:'D4'},
+     {t:'Nē / nezinu', next:'D4'}
+   ]},
+  {id:'D4', block:'D', kicker:'Nozīmīgums · 9/9', title:'Vai jūsu darbības traucējums varētu būtiski ietekmēt sabiedrisko drošību, aizsardzību vai veselību, vai radīt sistēmisku risku?',
+   why:'Šis kritērijs var piešķirt būtiska pakalpojuma sniedzēja statusu neatkarīgi no nozares vai lieluma. No 01.10.2026 tas skaidri attiecas arī uz nacionālajai drošībai nozīmīgām komercsabiedrībām, fondiem un biedrībām.', ref:'NKDL 20. p. 11. d.',
+   type:'single',
+   opts:[
+     {t:'Jā', next:null, out:{verdict:'essential-safety', title:'Iespējams būtisks statuss (nozīmīguma kritērijs)', reason:'Organizācijas, kuru darbības traucējums var būtiski ietekmēt sabiedrisko drošību, aizsardzību, veselību vai radīt sistēmisku risku, ir būtiski pakalpojumu sniedzēji neatkarīgi no lieluma vai nozares.', ref:'NKDL 20. p. 11. d.'}},
+     {t:'Nē', next:null, out:{verdict:'final'}},
+     {t:'Nezinu', next:null, out:{verdict:'essential-safety-unclear', title:'Nepieciešams precizēt', reason:'Nozīmīguma kritērijs prasa organizācijas pašai izvērtēt ietekmi — neskaidrības gadījumā ieteicama juridiska konsultācija.', ref:'NKDL 20. p. 11. d.'}}
+   ]}
+];
+
+const MATURITY_LABELS = ['0','1','2','3','4','5'];
+const MATURITY_TITLES = ['Nav ieviests','Sākotnējs','Definēts','Ieviests','Pārvaldīts un pārbaudīts','Optimizējas'];
+
+const CATEGORIES = [
+  {code:'a', name:'Risku analīzes un IS drošības politikas', weight:1,
+   controls:[
+     {id:'a1', text:'Kiberdrošības politika ir apstiprināta un pārskatīta ne retāk kā reizi 3 gados.', ref:'397. not. 27.–28. p.', w:'high'},
+     {id:'a2', text:'Risku novērtēšanas metodoloģija ir definēta un tiek piemērota.', ref:'397. not. 21.1 p.', w:'medium'}
+   ]},
+  {code:'b', name:'Incidentu pārvaldība', weight:1,
+   controls:[
+     {id:'b1', text:'Incidentu žurnāls tiek uzturēts, ieraksts ≤24h pēc atklāšanas.', ref:'397. not. 47. p.', w:'high'},
+     {id:'b2', text:'Ir noteiktas lomas un kontakti ziņošanai CERT.LV / SAB.', ref:'397. not. 7. sad.', w:'high'},
+     {id:'b3', text:'Nozīmīguma novērtēšanas procedūra (118. p. kritēriji) ir ieviesta.', ref:'397. not. 118. p.', w:'medium'}
+   ]},
+  {code:'c', name:'Nepārtrauktība un krīzes vadība', weight:1,
+   controls:[
+     {id:'c1', text:'Risku pārvaldības un IKT nepārtrauktības plāns eksistē un tiek pārskatīts pēc grafika.', ref:'397. not. 21.3, 40. p.', w:'high'},
+     {id:'c2', text:'Rezerves kopijas tiek testētas atbilstoši klasei (6 mēn. / 1 gads).', ref:'397. not. 67.–75. p.', w:'high'}
+   ]},
+  {code:'d', name:'Piegādes ķēdes drošība', weight:1,
+   controls:[
+     {id:'d1', text:'IKT piegādātāju kiberrisku novērtējums tiek veikts.', ref:'397. not. 86.–107. p.', w:'high'},
+     {id:'d2', text:'Apstiprināts, ka nav līgumu ar pakalpojumu sniedzējiem no aizliegtajām jurisdikcijām.', ref:'397. not. 86.–107. p.', w:'high'}
+   ]},
+  {code:'e', name:'Sistēmu iegāde, izstrāde, uzturēšana', weight:1,
+   controls:[
+     {id:'e1', text:'Ievainojamību pārvaldības process (atklāšana, labošana, prioritizēšana) darbojas.', ref:'Art. 21(2)(e)', w:'medium'}
+   ]},
+  {code:'f', name:'Pasākumu efektivitātes novērtēšana', weight:1,
+   controls:[
+     {id:'f1', text:'Pašnovērtējums tiek veikts atbilstoši grafikam (ikgadēji / reizi 3 gados).', ref:'397. not. 141.–143. p.', w:'high'}
+   ]},
+  {code:'g', name:'Kiberhigiēna un apmācības', weight:1,
+   controls:[
+     {id:'g1', text:'Jauna darbinieka pirmreizējā instruktāža ≤1 mēn. no konta izveides.', ref:'397. not. 76.1.1 p.', w:'medium'},
+     {id:'g2', text:'Ikgadēja apmācība visiem darbiniekiem.', ref:'397. not. 76.1.2 p.', w:'medium'}
+   ]},
+  {code:'h', name:'Kriptogrāfija un šifrēšana', weight:1,
+   controls:[
+     {id:'h1', text:'Datu šifrēšana pārraidē A un B klasēm ir ieviesta.', ref:'397. not. 81.–82. p.', w:'high'}
+   ]},
+  {code:'i', name:'Personāls, piekļuves kontrole, aktīvu pārvaldība', weight:1,
+   controls:[
+     {id:'i1', text:'IKT resursu un IS katalogs tiek uzturēts, aktualizēts ≤1 mēn.', ref:'397. not. 31. p.', w:'high'},
+     {id:'i2', text:'Sistēmu klasifikācija A/B/C ir veikta un dokumentēta.', ref:'397. not. Pielikums Nr.5', w:'high'},
+     {id:'i3', text:'MFA administratoriem ir ieviests visām sistēmām.', ref:'397. not. matrica pēc klases', w:'high'}
+   ]},
+  {code:'j', name:'MFA un droša komunikācija', weight:1,
+   controls:[
+     {id:'j1', text:'Definēts alternatīvs sakaru kanāls krīzes gadījumam.', ref:'Art. 21(2)(j)', w:'medium'}
+   ]}
+];
+
+/* =======================================================================
+   STATE
+   ======================================================================= */
+
+let currentStepId = 'A1';
+let trail = []; // {stepId, kicker, optText, tag}
+let verdictData = null;
+
+const controlState = {}; // id -> {compliance: 'yes'|'partial'|'no'|'na', maturity: 0-5}
+CATEGORIES.forEach(c => c.controls.forEach(ctl => controlState[ctl.id] = {compliance:null, maturity:null}));
+
+/* =======================================================================
+   SCOPE WIZARD RENDER
+   ======================================================================= */
+
+const qArea = document.getElementById('q-area');
+const resultArea = document.getElementById('result-area');
+const scopeIntro = document.getElementById('scope-intro');
+const railEl = document.getElementById('rail');
+const trailEl = document.getElementById('trail');
+
+const RAIL_ORDER = ['A1','A2','A3','B1','C1','D1','D2','D3','D4'];
+
+function renderRail(activeId){
+  const uniqueBlocks = ['A','B','C','D'];
+  const blockLabels = {A:'Jurisdikcija', B:'Organizācija', C:'Kategorijas', D:'Nozare/lielums'};
+  const currentBlock = RULES_STEPS.find(s=>s.id===activeId)?.block;
+  railEl.innerHTML = '';
+  uniqueBlocks.forEach((b,i)=>{
+    const done = trail.some(t=>t.block===b) || (currentBlock && uniqueBlocks.indexOf(currentBlock) > i);
+    const now = currentBlock === b;
+    const node = document.createElement('div');
+    node.className='node';
+    node.innerHTML = `<div class="dot ${done?'done':''} ${now?'now':''}">${done?'✓':(i+1)}</div><span class="label ${now?'now':''}">${blockLabels[b]}</span>`;
+    railEl.appendChild(node);
+    if(i < uniqueBlocks.length-1){
+      const seg = document.createElement('div'); seg.className='seg'; railEl.appendChild(seg);
+    }
+  });
+}
+
+function renderTrail(){
+  if(trail.length===0){ trailEl.classList.remove('show'); return; }
+  trailEl.classList.add('show');
+  trailEl.innerHTML = trail.map(t=>`<span class="crumb">${t.optText}</span>`).join('');
+}
+
+function renderStep(stepId){
+  const step = RULES_STEPS.find(s=>s.id===stepId);
+  if(!step){ return; }
+  renderRail(stepId);
+  renderTrail();
+  scopeIntro.style.display = trail.length ? 'none' : 'block';
+
+  qArea.innerHTML = `
+    <div class="card">
+      <div class="q-kicker">${step.kicker}</div>
+      <h2 class="q-title">${step.title}</h2>
+      ${step.sub ? `<p class="q-why" style="margin-bottom:8px">${step.sub}</p>` : ''}
+      <p class="q-why">${step.why} <span class="ref">${step.ref}</span></p>
+      <div class="opts">
+        ${step.opts.map((o,idx)=>`<button class="opt" data-idx="${idx}"><span class="letter">${String.fromCharCode(65+idx)}</span><span>${o.t}</span></button>`).join('')}
+      </div>
+      <div class="nav-row">
+        <button class="skip" id="back-btn" ${trail.length===0?'style="visibility:hidden"':''}>← Iepriekšējais jautājums</button>
+        <span></span>
+      </div>
+    </div>
+  `;
+
+  qArea.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = +btn.dataset.idx;
+      const opt = step.opts[idx];
+      trail.push({stepId, block:step.block, kicker:step.kicker, optText:opt.t, tag:opt.tag});
+      if(opt.out){
+        finalizeVerdict(opt.out);
+      } else {
+        currentStepId = opt.next;
+        renderStep(currentStepId);
+      }
+    });
+  });
+  const back = document.getElementById('back-btn');
+  if(back) back.addEventListener('click', ()=>{
+    if(trail.length===0) return;
+    trail.pop();
+    if(trail.length===0){ currentStepId='A1'; }
+    else { currentStepId = trail[trail.length-1].stepId; trail.pop(); renderStep(currentStepId); return; }
+    renderStep(currentStepId);
+  });
+}
+
+function getTag(block){
+  const e = trail.find(t=>t.block==='D' && t.tag && ['E','I','none'].includes(t.tag));
+  return e ? e.tag : null;
+}
+function getSizeTag(){
+  const e = trail.find(t=>['large','medium','small'].includes(t.tag));
+  return e ? e.tag : null;
+}
+
+function finalizeVerdict(out){
+  let verdict = out.verdict;
+  let title = out.title, reason = out.reason, ref = out.ref;
+
+  if(verdict === 'final'){
+    // combine sector + size
+    const sector = getTag();
+    const size = getSizeTag();
+    if(sector==='E' && size==='large'){ verdict='essential'; title='Būtiska pakalpojuma sniedzējs'; reason='"E" grupas nozare un liels uzņēmums nosaka būtiska pakalpojuma sniedzēja statusu.'; ref='NKDL 20. p. 8. d.'; }
+    else if(sector==='E' && size==='medium'){ verdict='important'; title='Svarīga pakalpojuma sniedzējs'; reason='"E" grupas nozarē vidējs uzņēmums ir svarīgs pakalpojumu sniedzējs.'; ref='NKDL 21. p. 1. d. 1. pk.'; }
+    else if(sector==='I' && (size==='large'||size==='medium')){ verdict='important'; title='Svarīga pakalpojuma sniedzējs'; reason='"I" grupas nozarē vidēji un lieli uzņēmumi ir svarīgi pakalpojumu sniedzēji.'; ref='NKDL 21. p. 1. d. 2. pk.'; }
+    else {
+      const soleProvider = trail.find(t=>t.stepId==='D3');
+      if(soleProvider && soleProvider.optText.startsWith('Jā')){
+        verdict = sector==='E' ? 'essential' : 'important';
+        title = sector==='E' ? 'Būtiska pakalpojuma sniedzējs' : 'Svarīga pakalpojuma sniedzējs';
+        reason = 'Vienīgajam pakalpojuma sniedzējam nozarē statuss piemērojams neatkarīgi no lieluma.';
+        ref = sector==='E' ? 'NKDL 20. p. 9. d.' : 'NKDL 21. p. 1. d. 3. pk.';
+      } else {
+        verdict = 'not-met';
+        title = 'Pēc sniegtajām atbildēm kritēriji nav izpildīti';
+        reason = 'Balstoties uz atbildēm, "būtiska" vai "svarīga" pakalpojuma sniedzēja kritēriji nav konstatēti. Tas nav galīgs izslēgšanas lēmums — NKDC ir tiesības pieņemt citu lēmumu.';
+        ref = 'NKDL 22. p. 5., 5.1 d.';
+      }
+    }
+  }
+
+  verdictData = {verdict, title, reason, ref};
+  renderVerdict();
+}
+
+function badgeClass(v){
+  if(['essential','essential-safety','important'].includes(v)) return 'green';
+  if(['essential-safety-unclear','unclear','not-met'].includes(v)) return 'orange';
+  if(['out','out-lv'].includes(v)) return 'orange';
+  return 'orange';
+}
+function badgeText(v){
+  const map = {
+    essential:'✅ Noteikts: Būtisks pakalpojuma sniedzējs',
+    important:'✅ Noteikts: Svarīgs pakalpojuma sniedzējs',
+    'essential-safety':'🟡 Iespējams: Būtisks (nozīmīguma kritērijs)',
+    'essential-safety-unclear':'🔴 Nepieciešama pārbaude',
+    unclear:'🔴 Nepieciešama pārbaude',
+    out:'🟡 Ārpus tvēruma (Latvijā)',
+    'out-lv':'🟡 Uzraudzība citā valstī',
+    'not-met':'🟡 Kritēriji nav konstatēti'
+  };
+  return map[v] || v;
+}
+
+function renderVerdict(){
+  qArea.innerHTML = '';
+  scopeIntro.style.display = 'none';
+  resultArea.classList.remove('hidden');
+
+  const chainHtml = trail.map(t=>`<div class="step"><span class="txt">${t.optText}</span></div>`).join('');
+
+  let calendarHtml = '';
+  if(['essential','important','essential-safety'].includes(verdictData.verdict)){
+    calendarHtml = `
+    <div class="section-title">Orientējošs pienākumu kalendārs</div>
+    <table class="calendar">
+      <thead><tr><th>Pienākums</th><th>Termiņš</th><th>Pamats</th></tr></thead>
+      <tbody>
+        <tr><td>Paziņot NKDC par statusu (1. pielikums)</td><td>1 mēnesis no atbilstības brīža</td><td class="ref">NKDL 22. p. 1. d.</td></tr>
+        <tr><td>Iecelt kiberdrošības vadītāju</td><td>3 mēneši no paziņojuma</td><td class="ref">NKDL 25. p. 2. d.</td></tr>
+        <tr><td>Paziņot par vadītāju NKDC un SAB</td><td>5 darba dienas</td><td class="ref">397. not. 10. p.</td></tr>
+        <tr><td>Pirmā pašnovērtēšana (16. pielikums)</td><td>Līdz 1. oktobrim / 3 mēn., ja statuss pēc 1. jūlija</td><td class="ref">397. not. 142.–143. p.</td></tr>
+        <tr><td>Regulāra pašnovērtēšana</td><td>Ikgadēji (A klase) vai reizi 3 gados</td><td class="ref">397. not. 141. p.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.82rem; color:var(--grey); margin-top:-4px;">Precīzi datumi tiks aprēķināti pilnajā versijā pēc statusa apstiprināšanas datuma ievades.</p>
+    `;
+  }
+
+  let ctaHtml = `<div class="cta-row">
+      <button class="btn" id="to-gap-btn">Turpināt uz prasību novērtējumu →</button>
+      <button class="btn ghost" id="restart-btn">Sākt no jauna</button>
+    </div>`;
+
+  resultArea.innerHTML = `
+    <div class="result-badge ${badgeClass(verdictData.verdict)}"><span class="dotc"></span>${badgeText(verdictData.verdict)}</div>
+    <h2 class="verdict">${verdictData.title}</h2>
+    <p class="verdict-sub">${verdictData.reason} <span class="mono" style="font-size:.85em;color:var(--grey)">${verdictData.ref}</span></p>
+
+    <div class="section-title">Pamatojuma ķēde</div>
+    <div class="chain">${chainHtml}</div>
+
+    <div class="flags">
+      <div class="flag"><span>ℹ️</span><span>Šis ir <b>pašnovērtējums</b>, nevis NKDC lēmums. NKDC ir tiesības pieņemt citu lēmumu par jūsu iekļaušanu reģistrā. <span class="mono">NKDL 22. p. 5., 5.1 d.</span></span></div>
+    </div>
+
+    ${calendarHtml}
+    ${ctaHtml}
+  `;
+
+  document.getElementById('to-gap-btn')?.addEventListener('click', ()=>{
+    switchView('gap');
+  });
+  document.getElementById('restart-btn')?.addEventListener('click', ()=>{
+    trail = []; currentStepId='A1'; verdictData=null;
+    resultArea.classList.add('hidden');
+    renderStep(currentStepId);
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+}
+
+/* =======================================================================
+   GAP ASSESSMENT
+   ======================================================================= */
+
+const heatgrid = document.getElementById('heatgrid');
+const controlsArea = document.getElementById('controls-area');
+const priorityList = document.getElementById('priority-list');
+const gapStatusLine = document.getElementById('gap-status-line');
+let selectedCat = null;
+
+function catStats(cat){
+  let sum=0, count=0, gaps=0, unset=0;
+  cat.controls.forEach(c=>{
+    const s = controlState[c.id];
+    if(s.compliance === 'na') return;
+    count++;
+    if(s.maturity===null) unset++;
+    else sum += s.maturity;
+    if(s.compliance === 'no') gaps++;
+  });
+  const avg = count>0 ? (sum/Math.max(count-unset,1)) : 0;
+  return {avg: count>unset ? sum/(count-unset) : null, gaps, count, unset};
+}
+
+function heatColor(avg){
+  if(avg===null) return 'var(--line)';
+  if(avg < 2) return 'var(--red)';
+  if(avg < 3.5) return 'var(--orange)';
+  return 'var(--green)';
+}
+
+function renderHeatgrid(){
+  heatgrid.innerHTML = '';
+  CATEGORIES.forEach(cat=>{
+    const stats = catStats(cat);
+    const cell = document.createElement('div');
+    cell.className = 'heatcell' + (selectedCat===cat.code ? ' sel':'');
+    const pct = stats.avg===null ? 0 : (stats.avg/5*100);
+    cell.innerHTML = `
+      <div class="cat-name">${cat.code}) ${cat.name}</div>
+      <div class="cat-num" style="color:${heatColor(stats.avg)}">${stats.avg===null?'—':stats.avg.toFixed(1)}</div>
+      <div class="cat-bar"><i style="width:${pct}%; background:${heatColor(stats.avg)}"></i></div>
+      ${stats.gaps>0 ? `<div class="cat-warn" style="color:var(--red)">${stats.gaps} obligāta neatbilstība</div>` : ''}
+    `;
+    cell.addEventListener('click', ()=>{ selectedCat = cat.code; renderHeatgrid(); renderControls(); });
+    heatgrid.appendChild(cell);
+  });
+}
+
+function renderControls(){
+  if(!selectedCat){ controlsArea.innerHTML = `<p style="color:var(--ink-soft); font-size:.9rem; margin-bottom:32px;">Izvēlieties kategoriju augstāk, lai redzētu un aizpildītu konkrētās prasības.</p>`; return; }
+  const cat = CATEGORIES.find(c=>c.code===selectedCat);
+  controlsArea.innerHTML = `
+    <div class="controls-panel">
+      <div class="ph"><h3>${cat.code}) ${cat.name}</h3><span class="ref">Art. 21(2)(${cat.code}) · MK not. Nr. 397</span></div>
+      ${cat.controls.map(c=>`
+        <div class="control-row" data-id="${c.id}">
+          <div class="ctext">${c.text}<span class="cref">${c.ref}</span></div>
+          <div class="seg" data-role="compliance">
+            <button data-v="yes">Jā</button>
+            <button data-v="partial">Daļēji</button>
+            <button data-v="no">Nē</button>
+            <button data-v="na">N/A</button>
+          </div>
+          <div class="mat-select" data-role="maturity">
+            ${[0,1,2,3,4,5].map(n=>`<div class="mat-dot" data-v="${n}" title="${MATURITY_TITLES[n]}">${n}</div>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  controlsArea.querySelectorAll('.control-row').forEach(row=>{
+    const id = row.dataset.id;
+    const state = controlState[id];
+    row.querySelectorAll('[data-role="compliance"] button').forEach(btn=>{
+      if(btn.dataset.v === state.compliance) btn.classList.add('on', btn.dataset.v==='na'?'na':'');
+      btn.addEventListener('click', ()=>{
+        controlState[id].compliance = btn.dataset.v;
+        if(btn.dataset.v === 'na') controlState[id].maturity = null;
+        renderControls(); renderHeatgrid(); renderPriority();
+      });
+    });
+    row.querySelectorAll('[data-role="maturity"] .mat-dot').forEach(dot=>{
+      if(+dot.dataset.v === state.maturity) dot.classList.add('on');
+      dot.addEventListener('click', ()=>{
+        if(controlState[id].compliance === 'na') return;
+        controlState[id].maturity = +dot.dataset.v;
+        renderControls(); renderHeatgrid(); renderPriority();
+      });
+    });
+  });
+}
+
+function renderPriority(){
+  const items = [];
+  CATEGORIES.forEach(cat=>{
+    cat.controls.forEach(c=>{
+      const s = controlState[c.id];
+      if(s.compliance === 'na') return;
+      const weightNum = c.w==='high'?3:(c.w==='medium'?2:1);
+      const maturity = s.maturity===null ? 0 : s.maturity;
+      const gapSize = 5 - maturity;
+      let score = weightNum * gapSize;
+      if(s.compliance === 'no') score += 20; // hard legal risk boost
+      if(s.compliance === null && s.maturity === null) return; // not yet answered
+      items.push({cat: cat.name, code: cat.code, text: c.text, score, hardGap: s.compliance==='no'});
+    });
+  });
+  items.sort((a,b)=>b.score-a.score);
+  const top = items.slice(0,6);
+  if(top.length===0){
+    priorityList.innerHTML = `<li><span class="ptext" style="color:var(--grey)">Atbildiet uz jautājumiem augstāk, lai šeit parādītos prioritārais rīcības plāns.</span></li>`;
+    return;
+  }
+  priorityList.innerHTML = top.map((it,i)=>`
+    <li>
+      <span class="rank">${String(i+1).padStart(2,'0')}</span>
+      <span class="ptext">${it.hardGap ? '⚠️ ' : ''}${it.text}<br><span class="owner">${it.code}) ${it.cat}</span></span>
+    </li>
+  `).join('');
+}
+
+function switchView(view){
+  const scopeEl = document.getElementById('view-scope');
+  const gapEl = document.getElementById('view-gap');
+  const navScope = document.getElementById('nav-scope');
+  const navGap = document.getElementById('nav-gap');
+  if(view==='gap'){
+    scopeEl.classList.add('hidden'); gapEl.classList.remove('hidden');
+    navScope.classList.remove('active'); navGap.classList.add('active');
+    if(verdictData){
+      gapStatusLine.innerHTML = `Statuss: <strong>${verdictData.title}</strong> (${verdictData.ref}). Rādītas visas demonstrācijas kategorijas.`;
+    }
+    renderHeatgrid(); renderControls(); renderPriority();
+  } else {
+    gapEl.classList.add('hidden'); scopeEl.classList.remove('hidden');
+    navGap.classList.remove('active'); navScope.classList.add('active');
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('nav-scope').addEventListener('click', e=>{e.preventDefault(); switchView('scope');});
+document.getElementById('nav-gap').addEventListener('click', e=>{e.preventDefault(); switchView('gap');});
+document.getElementById('btn-back-scope').addEventListener('click', ()=>switchView('scope'));
+
+/* init */
+renderStep(currentStepId);
+renderHeatgrid();
+renderControls();
+renderPriority();
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NIS2·LV — vai NIS2 skar jūsu uzņēmumu?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090B;--fg:#FAFAFA;--mu:#A1A1AA;--ac:#DFE104;--bd:#3F3F46;--dk:#27272A;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;border-radius:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'Space Grotesk','Inter',system-ui,sans-serif;font-weight:500;font-size:clamp(1.05rem,.95rem + .4vw,1.35rem);line-height:1.35;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+.noise{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70;opacity:.03;mix-blend-mode:overlay}
+::selection{background:var(--ac);color:#000}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ac);outline-offset:3px}
+h1,h2,h3{margin:0;text-transform:uppercase;font-weight:700;letter-spacing:-.05em;line-height:.9}
+.skip{position:absolute;left:-999px;top:0;background:var(--ac);color:#000;padding:12px 18px;font-weight:700;text-transform:uppercase;z-index:100}
+.skip:focus{left:0}
+.label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--ac)}
+
+/* navigation */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:2px solid var(--bd);display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap;padding:10px 2.5vw}
+.logo{font:inherit;font-weight:700;font-size:1.3rem;letter-spacing:-.04em;text-transform:uppercase;color:var(--fg);background:none;border:0;cursor:pointer;min-height:44px;padding:0}
+.logo b{color:var(--ac)}
+.tabs{display:flex;gap:4px;overflow-x:auto;flex:1 1 auto;-webkit-overflow-scrolling:touch}
+.tab{font:inherit;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;min-height:44px;padding:0 14px;border:2px solid var(--bd);background:transparent;color:var(--fg);cursor:pointer}
+.tab:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tab.on{background:var(--ac);border-color:var(--ac);color:#000}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 30px;font:inherit;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:-.02em;text-decoration:none;border:2px solid var(--ac);background:var(--ac);color:#000;cursor:pointer;transition:transform .2s ease-in-out,background-color .2s,color .2s}
+.btn:hover{transform:scale(1.05)}.btn:active{transform:scale(.95)}
+.btn.out{background:transparent;color:var(--fg);border-color:var(--bd)}
+.btn.out:hover{background:var(--fg);color:var(--bg);border-color:var(--fg);transform:none}
+.row-btns{display:flex;gap:14px;flex-wrap:wrap}
+
+/* pages */
+.page{padding:clamp(48px,8vw,100px) 2.5vw clamp(48px,7vw,90px)}
+.page[hidden]{display:none!important}
+.page h1{font-size:clamp(2.6rem,9vw,8rem);margin:18px 0 28px}
+.home h1{font-size:clamp(3rem,12vw,13rem)}
+.page h1 em{font-style:normal;color:var(--ac)}
+.lead{max-width:42rem;color:var(--mu);margin:0 0 32px}
+.fine{color:var(--mu);font-size:.95rem;margin:18px 0 0}
+h2.sub{font-size:clamp(1.8rem,4.5vw,3.4rem);margin:clamp(40px,6vw,72px) 0 20px}
+
+/* marquee */
+.marquee{overflow:hidden;background:var(--ac);color:#000}
+.track{display:flex;width:max-content;animation:mq 22s linear infinite}
+.group{display:flex;flex-shrink:0;align-items:center}
+.item{display:flex;align-items:baseline;gap:18px;padding:18px 38px;white-space:nowrap;text-transform:uppercase;font-weight:700;letter-spacing:-.04em}
+.item::after{content:"\2726";margin-left:56px;font-size:.5em;align-self:center}
+.xl{font-size:clamp(2.6rem,7vw,7rem);line-height:.9}
+.item small{font-size:clamp(.85rem,1.3vw,1.3rem);letter-spacing:0;max-width:16ch;white-space:normal;line-height:1}
+@keyframes mq{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+/* grids and cells */
+.grid{display:grid;gap:1px;background:var(--bd);border:2px solid var(--bd);grid-template-columns:1fr}
+@media(min-width:768px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}}
+.cell{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:var(--bg);color:var(--fg);padding:clamp(24px,3.5vw,44px);min-height:240px;font:inherit;border:0;transition:background-color .3s,color .3s}
+button.cell{cursor:pointer;width:100%}
+.cell:hover{background:var(--ac);color:#000}
+.cell h3{font-size:clamp(1.5rem,2.6vw,2.4rem);margin-bottom:12px}
+.cell p,.cell span.p{margin:0;color:var(--mu);font-size:clamp(1rem,1vw + .6rem,1.25rem);transition:color .3s;display:block}
+.cell:hover p,.cell:hover span.p{color:#000}
+.cell .big{display:block;margin-top:auto;padding-top:18px;font-size:clamp(4rem,9vw,8rem);font-weight:700;letter-spacing:-.06em;line-height:.8;color:var(--dk);transition:color .3s}
+.cell:hover .big{color:#000}
+.cell.hot{background:var(--ac);color:#000}.cell.hot p{color:#000}
+.date{font-size:clamp(1.6rem,2.8vw,2.3rem);font-weight:700;color:var(--ac);margin-bottom:12px;transition:color .3s}
+.cell:hover .date,.cell.hot .date{color:#000}
+.rows{border-top:2px solid var(--bd)}
+.r{display:grid;grid-template-columns:1fr;gap:4px 24px;padding:18px 0;border-bottom:2px solid var(--bd)}
+@media(min-width:768px){.r{grid-template-columns:5fr 3fr 2fr;align-items:baseline}}
+.r b{font-size:clamp(1.1rem,1.6vw,1.5rem)}.r .t{color:var(--ac);font-weight:700;font-size:clamp(1.1rem,1.6vw,1.5rem)}.r small{color:var(--mu);font-size:.9rem}
+.stmt{font-size:clamp(1.3rem,2.4vw,2rem);font-weight:700;color:var(--ac);margin:32px 0 0;max-width:46rem}
+
+/* page footer controls */
+.pager{display:flex;gap:14px;flex-wrap:wrap;margin-top:clamp(40px,6vw,72px);padding-top:28px;border-top:2px solid var(--bd)}
+footer{border-top:2px solid var(--bd);padding:28px 2.5vw calc(28px + env(safe-area-inset-bottom,0px));color:var(--mu);font-size:.9rem}
+footer p{max-width:62rem;margin:0;line-height:1.5}
+
+@media (prefers-reduced-motion:reduce){.track{animation:none;width:auto;flex-wrap:wrap}.group[aria-hidden="true"]{display:none}.btn:hover,.btn:active{transform:none}*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Pāriet uz saturu</a>
+<svg class="noise" aria-hidden="true" focusable="false"><title>Graudainuma tekstūra</title><filter id="nz"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4"/></filter><rect width="100%" height="100%" filter="url(#nz)"/></svg>
+
+<header class="nav">
+  <button class="logo" data-go="sakums" aria-label="Uz sākumlapu">NIS2<b>·</b>LV</button>
+  <nav class="tabs" aria-label="Galvenā navigācija">
+    <button class="tab" data-nav="sakums" data-go="sakums">Sākums</button>
+    <button class="tab" data-nav="regulejums" data-go="regulejums">Regulējums</button>
+    <button class="tab" data-nav="produkts" data-go="produkts">Produkts</button>
+    <button class="tab" data-nav="metodologija" data-go="metodologija">Metodoloģija</button>
+    <button class="tab" data-nav="parbaude" data-go="parbaude">Pārbaude</button>
+    <button class="tab" data-nav="kontakti" data-go="kontakti">Kontakti</button>
+  </nav>
+</header>
+
+<main id="main">
+
+<!-- ============ SĀKUMS ============ -->
+<section class="page home" id="p-sakums" aria-label="Sākums">
+  <div class="label">● Nacionālās kiberdrošības likums · MK noteikumi Nr. 397</div>
+  <h1>Vai NIS2 <em>skar</em> jūsu uzņēmumu?</h1>
+  <p class="lead">Bezmaksas pārbaude noskaidro, vai ES NIS2 direktīva attiecas uz jūsu uzņēmumu. Katram jautājumam ir atsauce uz konkrētu likuma pantu, nevis minējumi.</p>
+  <div class="row-btns">
+    <a class="btn" href="https://claude.ai/artifact/4XScqgPJVxyhHupPjcFcRT" target="_blank" rel="noopener">Pārbaudīt uzņēmumu →</a>
+    <button class="btn out" data-go="produkts">Kā tas strādā</button>
+  </div>
+  <p class="fine">Bez reģistrācijas. Bez maksas. Pārbaudes lapa pati nesaglabā atbildes.</p>
+</section>
+
+<div class="marquee" id="home-marquee" role="group" aria-label="Svarīgākie skaitļi">
+  <div class="track">
+    <div class="group">
+      <div class="item"><span class="xl">24 h</span><small>agrīnais brīdinājums par nozīmīgu incidentu</small></div>
+      <div class="item"><span class="xl">72 h</span><small>sākotnējais ziņojums</small></div>
+      <div class="item"><span class="xl">10 M€</span><small>maksimālais sods būtiskiem pakalpojumu sniedzējiem</small></div>
+      <div class="item"><span class="xl">01.10.2026</span><small>grozījumi par nacionālajai drošībai nozīmīgiem subjektiem</small></div>
+    </div>
+    <div class="group" aria-hidden="true">
+      <div class="item"><span class="xl">24 h</span><small>agrīnais brīdinājums par nozīmīgu incidentu</small></div>
+      <div class="item"><span class="xl">72 h</span><small>sākotnējais ziņojums</small></div>
+      <div class="item"><span class="xl">10 M€</span><small>maksimālais sods būtiskiem pakalpojumu sniedzējiem</small></div>
+      <div class="item"><span class="xl">01.10.2026</span><small>grozījumi par nacionālajai drošībai nozīmīgiem subjektiem</small></div>
+    </div>
+  </div>
+</div>
+
+<section class="page home" id="p-sakums-cards" aria-label="Sadaļas">
+  <div class="label">Sadaļas</div>
+  <div class="grid g2" style="margin-top:24px">
+    <button class="cell" data-go="regulejums"><h3>Regulējums</h3><span class="p">Ko prasa likums, kādi ir termiņi un sodi.</span><span class="big" aria-hidden="true">01</span></button>
+    <button class="cell" data-go="produkts"><h3>Produkts</h3><span class="p">Seši rīka moduļi un pierādījumu modelis.</span><span class="big" aria-hidden="true">02</span></button>
+    <button class="cell" data-go="metodologija"><h3>Metodoloģija</h3><span class="p">Piecas fāzes, laika grafiks un gatavības līmeņi.</span><span class="big" aria-hidden="true">03</span></button>
+    <button class="cell" data-go="parbaude"><h3>Bezmaksas pārbaude</h3><span class="p">Ap 10 minūtēm līdz pirmajam rezultātam.</span><span class="big" aria-hidden="true">04</span></button>
+  </div>
+</section>
+
+<!-- ============ REGULĒJUMS ============ -->
+<section class="page" id="p-regulejums" aria-label="Regulējums" hidden>
+  <div class="label">01 · Regulējums</div>
+  <h1>Regulējums</h1>
+  <p class="lead">NIS2 ir ES direktīva. Latvijā to īsteno Nacionālās kiberdrošības likums un MK noteikumi Nr. 397, kuros ir konkrētās prasības un termiņi.</p>
+  <div class="grid g4">
+    <div class="cell"><div class="date">01.09.2024</div><p>Nacionālās kiberdrošības likums stājas spēkā.</p></div>
+    <div class="cell"><div class="date">02.07.2025</div><p>MK noteikumi Nr. 397 nosaka minimālās prasības.</p></div>
+    <div class="cell"><div class="date">18.06.2026</div><p>Grozījumi likumā: personāls, pašnovērtējums, audits.</p></div>
+    <div class="cell hot"><div class="date">01.10.2026</div><p>Grozījumi par nacionālajai drošībai nozīmīgiem subjektiem (20. p. 11. d.).</p></div>
+  </div>
+  <h2 class="sub">Pienākumi un termiņi</h2>
+  <div class="rows">
+    <div class="r"><b>Paziņot NKDC par statusu</b><span class="t">1 mēnesis</span><small>NKDL 22. p.</small></div>
+    <div class="r"><b>Iecelt kiberdrošības vadītāju</b><span class="t">3 mēneši</span><small>NKDL 25. p.</small></div>
+    <div class="r"><b>Paziņot NKDC par vadītāju</b><span class="t">5 darba dienas</span><small>397. not. 10. p.</small></div>
+    <div class="r"><b>Izstrādāt četrus obligātos dokumentus</b><span class="t">obligāti</span><small>397. not. 21. p.</small></div>
+    <div class="r"><b>Pirmā pašnovērtēšana</b><span class="t">līdz 1. okt. vai 3 mēn.</span><small>397. not. 142.–143. p.</small></div>
+  </div>
+  <h2 class="sub">Incidenti un sodi</h2>
+  <div class="grid g3">
+    <div class="cell"><div class="date">24 h</div><h3>Agrīnais brīdinājums</h3><p>Pirmā reakcija uz nozīmīgu incidentu.</p></div>
+    <div class="cell"><div class="date">72 h</div><h3>Sākotnējais ziņojums</h3><p>Pirmais izvērtējums un ietekme.</p></div>
+    <div class="cell"><div class="date">1 mēnesis</div><h3>Galaziņojums</h3><p>Cēloņi, seku novēršana un secinājumi. Termiņš skaitās no sākotnējā ziņojuma.</p></div>
+  </div>
+  <p class="stmt">Sodi: līdz 10 milj. € būtiskiem un 7 milj. € svarīgiem pakalpojumu sniedzējiem par būtisku neatbilstību. Process jāsagatavo pirms incidenta, nevis tā laikā.</p>
+  <p class="fine">Likums mainās regulāri. Pirms lēmumiem pārbaudiet aktuālo redakciju likumi.lv.</p>
+  <div class="pager"><button class="btn out" data-back>← Atpakaļ</button><button class="btn out" data-go="sakums">Uz sākumu</button><button class="btn" data-go="produkts">Produkts →</button></div>
+</section>
+
+<!-- ============ PRODUKTS ============ -->
+<section class="page" id="p-produkts" aria-label="Produkts" hidden>
+  <div class="label">02 · Produkts</div>
+  <h1>Produkts</h1>
+  <p class="lead">Viena vide visam ceļam: no statusa noteikšanas līdz ikgadējai uzturēšanai.</p>
+  <div class="grid g3">
+    <div class="cell"><h3>1. Piemērojamības vednis</h3><p>Statuss ar pamatojumu un atsaucēm uz likumu.</p></div>
+    <div class="cell"><h3>2. Aktīvu katalogs</h3><p>Visas sistēmas ar klasēm A, B, C. AI iesaka, cilvēks apstiprina.</p></div>
+    <div class="cell"><h3>3. Robu analīze</h3><p>10 likuma kategorijas, atbilstība un briedums 0–5.</p></div>
+    <div class="cell"><h3>4. Dokumenti</h3><p>Četri obligātie dokumenti. AI sagatavo melnrakstu, cilvēks apstiprina.</p></div>
+    <div class="cell"><h3>5. Pārbaudes un apmācība</h3><p>Instrukcijas un trekeris, kas savienojas ar uzņēmuma Mācību centru.</p></div>
+    <div class="cell"><h3>6. Ceļvedis un atskaite</h3><p>Progress, atskaite drukāšanai, projekta rezerves kopija.</p></div>
+  </div>
+  <h2 class="sub">Pierādījumi, nevis atzīmes</h2>
+  <div class="grid g3">
+    <div class="cell"><h3>Aizpildīts</h3><p>Atbilde ievadīta. Nenozīmē, ka pasākums ir ieviests.</p></div>
+    <div class="cell hot"><h3>Pierādīts</h3><p>Norādīts dokuments un pārbaudes datums.</p></div>
+    <div class="cell"><h3>Nav apstiprināts</h3><p>Atbilde "Jā" vai "Daļēji" bez pierādījuma.</p></div>
+  </div>
+  <p class="stmt">Progress ir aizpildīšanas rādītājs, nevis atbilstības apliecinājums.</p>
+  <div class="pager"><button class="btn out" data-back>← Atpakaļ</button><button class="btn out" data-go="sakums">Uz sākumu</button><button class="btn" data-go="metodologija">Metodoloģija →</button></div>
+</section>
+
+<!-- ============ METODOLOĢIJA ============ -->
+<section class="page" id="p-metodologija" aria-label="Metodoloģija" hidden>
+  <div class="label">03 · Metodoloģija</div>
+  <h1>Metodoloģija</h1>
+  <p class="lead">Piecas fāzes un nulles fāze. Ilgumi ir orientējoši un atkarīgi no iesaistīto cilvēku pieejamības.</p>
+  <div class="rows">
+    <div class="r"><b>0 · Mandāts</b><span class="t">1–2 nedēļas</span><small>Vadības lēmums un atbildīgā persona</small></div>
+    <div class="r"><b>1 · Novērtējums</b><span class="t">3–4 nedēļas</span><small>Statuss, katalogs, robi</small></div>
+    <div class="r"><b>2 · Projektēšana</b><span class="t">4–6 nedēļas</span><small>Dokumenti un plāns</small></div>
+    <div class="r"><b>3 · Ieviešana</b><span class="t">2–3 mēneši</span><small>MFA, segmentācija, pārbaudes</small></div>
+    <div class="r"><b>4 · Apmācība un tests</b><span class="t">ap 1 mēnesi</span><small>Fišinga simulācija, galda mācības</small></div>
+    <div class="r"><b>5 · Uzturēšana</b><span class="t">pastāvīgi</span><small>Ikgadēja pašnovērtēšana</small></div>
+  </div>
+  <h2 class="sub">Trīs gatavības līmeņi</h2>
+  <div class="grid g3">
+    <div class="cell"><div class="date">Līmenis 0</div><h3>Apzināšanās</h3><p>Piemērojamība izvērtēta, gatavošanās notiek sistemātiski.</p></div>
+    <div class="cell"><div class="date">Līmenis 1</div><h3>Strukturēts pašnovērtējums</h3><p>Pašnovērtējums veikts, ir rīcības plāns ar termiņiem.</p></div>
+    <div class="cell hot"><div class="date">Līmenis 2</div><h3>Dokumentēti pasākumi</h3><p>Vismaz 60% punktu ar pierādījumu, politikas apstiprinātas, pārbaudes veiktas.</p></div>
+  </div>
+  <p class="stmt">Apliecinājums veidojas no ievadītajiem datiem, tāpēc nevar solīt vairāk, nekā pierādīts.</p>
+  <div class="pager"><button class="btn out" data-back>← Atpakaļ</button><button class="btn out" data-go="sakums">Uz sākumu</button><button class="btn" data-go="parbaude">Pārbaude →</button></div>
+</section>
+
+<!-- ============ PĀRBAUDE ============ -->
+<section class="page" id="p-parbaude" aria-label="Bezmaksas pārbaude" hidden>
+  <div class="label">04 · Bezmaksas pārbaude</div>
+  <h1>Bezmaksas <em>pārbaude</em></h1>
+  <p class="lead">Ap 10 minūtēm. Bez reģistrācijas. Rezultāts ir statuss ar pamatojuma ķēdi un atsaucēm uz likuma pantiem.</p>
+  <div class="row-btns"><a class="btn" href="https://claude.ai/artifact/4XScqgPJVxyhHupPjcFcRT" target="_blank" rel="noopener">Sākt pārbaudi →</a></div>
+  <p class="fine">Pārbaudes lapa rēķina rezultātu jūsu pārlūkā un pati atbildes nesaglabā. To izvieto claude.ai platformā, uz kuru attiecas tās noteikumi. Pilnais darba instruments ir pieejams programmas ietvaros.</p>
+  <h2 class="sub">Ko rīks nedara</h2>
+  <div class="rows">
+    <div class="r"><b>Nav juridisks atzinums</b><small style="grid-column:span 2">NKDC var noteikt statusu citādi (NKDL 22. p. 5. d.). Sarežģītos gadījumos vajadzīga jurista konsultācija.</small></div>
+    <div class="r"><b>Nav pentests</b><small style="grid-column:span 2">Ielaušanās testēšanu veic sertificēts neatkarīgs partneris (MK not. Nr. 397, 131.–134. p.).</small></div>
+    <div class="r"><b>Pierādīts nenozīmē pārbaudīts saturs</b><small style="grid-column:span 2">Rīks pārbauda, vai norādīts dokuments un datums, nevis paša dokumenta saturu.</small></div>
+    <div class="r"><b>Likums mainās</b><small style="grid-column:span 2">Normatīvā bāze pārbaudīta 28.09.2026; MK not. Nr. 397 grozījumi pēc jūnija jāapstiprina.</small></div>
+  </div>
+  <div class="pager"><button class="btn out" data-back>← Atpakaļ</button><button class="btn out" data-go="sakums">Uz sākumu</button><button class="btn" data-go="kontakti">Kontakti →</button></div>
+</section>
+
+<!-- ============ KONTAKTI ============ -->
+<section class="page" id="p-kontakti" aria-label="Kontakti" hidden>
+  <div class="label">Kontakti</div>
+  <h1>Kontakti</h1>
+  <p class="lead">Jautājumi par pārbaudi, metodoloģiju vai programmu.</p>
+  <div class="grid g2">
+    <div class="cell"><div class="label">E-pasts</div><h3 style="margin-top:12px"><a href="mailto:info@quantrum.lv">info@quantrum.lv</a></h3></div>
+    <div class="cell"><div class="label">Tālrunis</div><h3 style="margin-top:12px"><a href="tel:+37126582076">+371 26582076</a></h3></div>
+    <div class="cell"><div class="label">Adrese</div><h3 style="margin-top:12px">Tallinas 95 - 206, Rīga</h3></div>
+    <div class="cell"><div class="label">Tīmeklis</div><h3 style="margin-top:12px"><a href="http://quant.lv" target="_blank" rel="noopener">quant.lv</a></h3></div>
+  </div>
+  <div class="pager"><button class="btn out" data-back>← Atpakaļ</button><button class="btn" data-go="sakums">Uz sākumu</button></div>
+</section>
+
+</main>
+
+<footer>
+  <p>Šī lapa un instruments nav juridisks pakalpojums un nesniedz juridiskas konsultācijas. Pamatā: Nacionālās kiberdrošības likums un MK noteikumi Nr. 397. Likums regulāri tiek grozīts, tāpēc pirms lēmumu pieņemšanas pārbaudiet aktuālo redakciju <a href="https://likumi.lv" target="_blank" rel="noopener">likumi.lv</a>.</p>
+</footer>
+
+<script>
+(function(){
+  var PAGES = ['sakums','regulejums','produkts','metodologija','parbaude','kontakti'];
+  var TITLES = {sakums:'NIS2·LV — vai NIS2 skar jūsu uzņēmumu?',regulejums:'Regulējums — NIS2·LV',produkts:'Produkts — NIS2·LV',metodologija:'Metodoloģija — NIS2·LV',parbaude:'Bezmaksas pārbaude — NIS2·LV',kontakti:'Kontakti — NIS2·LV'};
+  var current = null, stack = [];
+
+  function show(id, fromBack){
+    if(PAGES.indexOf(id) < 0) id = 'sakums';
+    if(!fromBack && current && current !== id) stack.push(current);
+    current = id;
+    var home = id === 'sakums';
+    PAGES.forEach(function(p){
+      var el = document.getElementById('p-' + p);
+      if(el) el.hidden = (p !== id);
+    });
+    document.getElementById('p-sakums-cards').hidden = !home;
+    document.getElementById('home-marquee').hidden = !home;
+    document.querySelectorAll('[data-nav]').forEach(function(b){
+      var on = b.getAttribute('data-nav') === id;
+      b.classList.toggle('on', on);
+      if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+    });
+    document.title = TITLES[id];
+    window.scrollTo(0, 0);
+    var h = document.querySelector('#p-' + id + ' h1');
+    if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:true}); }
+    try { history.replaceState(null, '', '#' + id); } catch(e) {}
+  }
+
+  document.addEventListener('click', function(e){
+    var go = e.target.closest('[data-go]');
+    if(go){ e.preventDefault(); show(go.getAttribute('data-go')); return; }
+    var back = e.target.closest('[data-back]');
+    if(back){ e.preventDefault(); show(stack.length ? stack.pop() : 'sakums', true); }
+  });
+  window.addEventListener('hashchange', function(){ var id = location.hash.slice(1); if(id && id !== current) show(id); });
+  show(location.hash.slice(1) || 'sakums');
+})();
+</script>
+</body>
+</html>

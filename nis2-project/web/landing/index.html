@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NIS2 pārbaude — vai NIS2 skar jūsu uzņēmumu?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090B;--fg:#FAFAFA;--muted:#27272A;--muted-fg:#A1A1AA;--accent:#DFE104;--border:#3F3F46;
+color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;border-radius:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'Space Grotesk','Inter',system-ui,sans-serif;font-weight:500;font-size:clamp(1.125rem,1rem + .5vw,1.5rem);line-height:1.3;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+.noise{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70;opacity:.03;mix-blend-mode:overlay}
+::selection{background:var(--accent);color:#000}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.skip{position:absolute;left:-999px;top:0;background:var(--accent);color:#000;padding:12px 18px;font-weight:700;text-transform:uppercase;z-index:100}
+.skip:focus{left:0}
+h1,h2,h3{margin:0;text-transform:uppercase;font-weight:700;letter-spacing:-.05em;line-height:.88}
+.label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--accent)}
+
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:12px 2.5vw}
+.logo{font-weight:700;text-transform:uppercase;letter-spacing:-.04em;font-size:1.4rem;text-decoration:none}
+.logo b{color:var(--accent)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 32px;font-family:inherit;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:-.02em;text-decoration:none;border:2px solid var(--accent);background:var(--accent);color:#000;cursor:pointer;transition:transform .2s ease-in-out,background-color .2s,color .2s}
+.btn:hover{transform:scale(1.05)}.btn:active{transform:scale(.95)}
+.btn.sm{min-height:44px;padding:0 20px;font-size:.85rem}
+.btn.outline{background:transparent;color:var(--fg);border-color:var(--border)}
+.btn.outline:hover{background:var(--fg);color:var(--bg);border-color:var(--fg);transform:none}
+.btn.inv{background:var(--bg);border-color:var(--bg);color:var(--accent)}
+.btn.lg{min-height:80px;padding:0 48px;font-size:1.25rem}
+
+section{padding:clamp(72px,10vw,128px) 2.5vw}
+.hero{position:relative;overflow:hidden;padding-top:clamp(48px,9vw,120px);padding-bottom:clamp(56px,8vw,110px)}
+#hero-inner{transform-origin:50% 0;will-change:transform,opacity}
+.hero h1{font-size:clamp(3rem,12vw,14rem);margin:24px 0 36px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.lead{max-width:42rem;color:var(--muted-fg);margin:0 0 36px}
+.cta-row{display:flex;gap:16px;flex-wrap:wrap}
+.fine{color:var(--muted-fg);font-size:.95rem;margin:20px 0 0}
+
+.marquee{overflow:hidden;border-block:2px solid var(--border)}
+.marquee.acc{background:var(--accent);color:#000;border-color:var(--accent)}
+.track{display:flex;width:max-content;animation:mq var(--dur,24s) linear infinite}
+.group{display:flex;flex-shrink:0;align-items:center}
+.item{display:flex;align-items:baseline;gap:20px;padding:20px 40px;white-space:nowrap;text-transform:uppercase;font-weight:700;letter-spacing:-.04em}
+.item::after{content:"\2726";margin-left:60px;font-size:.5em;align-self:center}
+.item .xl{font-size:clamp(3rem,8vw,8rem);line-height:.9}
+.item small{font-size:clamp(.9rem,1.4vw,1.4rem);letter-spacing:0;max-width:16ch;white-space:normal;line-height:1}
+.marquee.slow{border-color:var(--border)}
+.marquee.slow .item{font-size:clamp(2rem,5vw,5rem);color:var(--muted-fg);padding:24px 36px}
+@keyframes mq{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+.h2{font-size:clamp(2.5rem,8vw,6rem);margin:16px 0 0;max-width:16ch}
+.grid{display:grid;gap:1px;background:var(--border);border:2px solid var(--border);margin-top:clamp(36px,5vw,64px);grid-template-columns:1fr}
+@media(min-width:768px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}}
+.cell{display:flex;flex-direction:column;background:var(--bg);padding:clamp(28px,4vw,48px);min-height:320px;transition:background-color .3s,color .3s}
+.cell:hover{background:var(--accent);color:#000}
+.cell h3{font-size:clamp(1.6rem,3vw,3rem);line-height:.95;margin-bottom:16px}
+.cell p{margin:0;color:var(--muted-fg);font-size:clamp(1.05rem,1.1vw + .7rem,1.35rem);line-height:1.35;transition:color .3s}
+.cell:hover p{color:#000}
+.cell .big{margin-top:auto;align-self:flex-end;padding-top:24px;font-size:clamp(6rem,14vw,12rem);font-weight:700;letter-spacing:-.06em;line-height:.8;color:var(--muted);transition:color .3s}
+.cell:hover .big{color:#000}
+.tag{align-self:flex-start;margin-bottom:16px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.2em;border:2px solid currentColor;padding:4px 10px;color:var(--accent)}
+.cell:hover .tag{color:#000}
+
+.sector-label{padding:clamp(40px,6vw,72px) 2.5vw 20px}
+.honest{border:2px solid var(--border);border-left:8px solid var(--accent);padding:clamp(28px,4vw,56px)}
+.honest h2{font-size:clamp(2rem,5vw,4rem);margin-bottom:24px}
+.honest p{max-width:48rem;color:var(--muted-fg);margin:0 0 16px}
+
+.final{background:var(--accent);color:#000}
+.final h2{font-size:clamp(3rem,12vw,14rem);margin-bottom:32px}
+.final p{max-width:36rem;margin:0 0 36px;font-weight:700}
+footer{border-top:2px solid var(--border);padding:32px 2.5vw calc(32px + env(safe-area-inset-bottom,0px));color:var(--muted-fg);font-size:.9rem}
+footer p{max-width:60rem;margin:0;line-height:1.5}
+
+@media (prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.track{animation:none;width:auto;flex-wrap:wrap}
+.group[aria-hidden="true"]{display:none}
+.btn:hover,.btn:active{transform:none}
+*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Pāriet uz saturu</a>
+<svg class="noise" aria-hidden="true" focusable="false"><title>Graudainuma tekstūra</title><filter id="nz"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4"/></filter><rect width="100%" height="100%" filter="url(#nz)"/></svg>
+
+<header class="nav">
+  <a class="logo" href="#main">NIS2<b>·</b>LV</a>
+  <a class="btn sm" href="https://claude.ai/artifact/4XScqgPJVxyhHupPjcFcRT" target="_blank" rel="noopener">Sākt bez maksas</a>
+</header>
+
+<main id="main">
+<section class="hero" id="hero">
+  <div id="hero-inner">
+    <div class="label">● Nacionālās kiberdrošības likums · MK noteikumi Nr. 397</div>
+    <h1>Vai NIS2 <em>skar</em> jūsu uzņēmumu?</h1>
+    <p class="lead">Bezmaksas pārbaude, kas soli pa solim noskaidro, vai ES NIS2 direktīva attiecas uz jūsu uzņēmumu. Katram jautājumam ir atsauce uz konkrētu likuma pantu, nevis minējumi.</p>
+    <div class="cta-row">
+      <a class="btn" href="https://claude.ai/artifact/4XScqgPJVxyhHupPjcFcRT" target="_blank" rel="noopener">Pārbaudīt savu uzņēmumu →</a>
+      <a class="btn outline" href="#ka-strada">Kā tas strādā</a>
+    </div>
+    <p class="fine">Bez reģistrācijas. Bez maksas. Pārbaudes lapa pati nesaglabā atbildes. Apmēram 10 minūtes.</p>
+  </div>
+</section>
+
+<div class="marquee acc" style="--dur:22s" role="group" aria-label="Svarīgākie skaitļi">
+  <div class="track">
+    <div class="group">
+      <div class="item"><span class="xl">24 h</span><small>agrīnais brīdinājums par nozīmīgu incidentu</small></div>
+      <div class="item"><span class="xl">72 h</span><small>sākotnējais ziņojums</small></div>
+      <div class="item"><span class="xl">10 M€</span><small>maksimālais sods būtiskiem pakalpojumu sniedzējiem</small></div>
+      <div class="item"><span class="xl">01.10.2026</span><small>grozījumi par nacionālajai drošībai nozīmīgiem subjektiem</small></div>
+    </div>
+    <div class="group" aria-hidden="true">
+      <div class="item"><span class="xl">24 h</span><small>agrīnais brīdinājums par nozīmīgu incidentu</small></div>
+      <div class="item"><span class="xl">72 h</span><small>sākotnējais ziņojums</small></div>
+      <div class="item"><span class="xl">10 M€</span><small>maksimālais sods būtiskiem pakalpojumu sniedzējiem</small></div>
+      <div class="item"><span class="xl">01.10.2026</span><small>grozījumi par nacionālajai drošībai nozīmīgiem subjektiem</small></div>
+    </div>
+  </div>
+</div>
+
+<section id="problema">
+  <div class="label">Problēma</div>
+  <h2 class="h2">NIS2 nav tikai IT jautājums</h2>
+  <div class="grid g2">
+    <article class="cell"><h3>Likums skar vairāk nozaru, nekā šķiet</h3><p>Enerģētika, transports, veselība, pārtika, ražošana, apsardze, pasts, ķīmija un citas. Likums tās nosauc tieši, ne tikai IT un telekomunikācijas.</p><div class="big" aria-hidden="true">01</div></article>
+    <article class="cell"><h3>Piemērojamība nav acīmredzama</h3><p>Tā atkarīga no nozares, lieluma un konkrētās darbības. Vienkāršas atbildes nav, ir kritēriji, kas jāizej pa soļiem.</p><div class="big" aria-hidden="true">02</div></article>
+    <article class="cell"><h3>Jūs varat būt iekšā, formāli neietilpstot</h3><p>Ja jūsu klients ir NIS2 subjekts, viņam jāizvērtē savi piegādātāji. Kiberdrošības apliecinājumus var pieprasīt līgumu ietvaros neatkarīgi no jūsu statusa.</p><div class="big" aria-hidden="true">03</div></article>
+    <article class="cell"><h3>Sodi ir reāli</h3><p>Līdz 10 milj. € būtiskiem un 7 milj. € svarīgiem pakalpojumu sniedzējiem par būtisku neatbilstību.</p><div class="big" aria-hidden="true">04</div></article>
+  </div>
+</section>
+
+<div class="sector-label label">Likums nosauc tieši</div>
+<div class="marquee slow" style="--dur:70s" role="group" aria-label="Nozares, kuras nosauc likums">
+  <div class="track">
+    <div class="group">
+      <div class="item">Enerģētika</div><div class="item">Transports</div><div class="item">Bankas</div><div class="item">Veselība</div><div class="item">Ūdens</div><div class="item">Digitālā infrastruktūra</div><div class="item">Pasts</div><div class="item">Atkritumi</div><div class="item">Ķīmija</div><div class="item">Pārtika</div><div class="item">Ražošana</div><div class="item">Apsardze</div><div class="item">Zinātne</div>
+    </div>
+    <div class="group" aria-hidden="true">
+      <div class="item">Enerģētika</div><div class="item">Transports</div><div class="item">Bankas</div><div class="item">Veselība</div><div class="item">Ūdens</div><div class="item">Digitālā infrastruktūra</div><div class="item">Pasts</div><div class="item">Atkritumi</div><div class="item">Ķīmija</div><div class="item">Pārtika</div><div class="item">Ražošana</div><div class="item">Apsardze</div><div class="item">Zinātne</div>
+    </div>
+  </div>
+</div>
+
+<section id="ka-strada">
+  <div class="label">Kā tas strādā</div>
+  <h2 class="h2">Strukturēts process, nevis vēl viena PDF</h2>
+  <div class="grid g3">
+    <article class="cell"><span class="tag">Bezmaksas</span><h3>Piemērojamības vednis</h3><p>Ap 9 jautājumiem par nozari, lielumu un specifiku. Rezultāts ir statuss ar pamatojuma ķēdi, ko var uzrādīt vadībai vai juristam.</p><div class="big" aria-hidden="true">01</div></article>
+    <article class="cell"><span class="tag">Demo + programma</span><h3>Atbilstības robu analīze</h3><p>10 likuma kategorijas, sadalītas pārbaudāmos punktos. Redzams, kur esat gatavi un kur ir darāmais, ar prioritātēm.</p><div class="big" aria-hidden="true">02</div></article>
+    <article class="cell"><span class="tag">Programmā</span><h3>Plāns, dokumenti, apmācība</h3><p>Obligāto dokumentu melnraksti ar AI palīgu, tehnisko pārbaužu saraksts, apmācību trekeris, termiņu kalendārs un gatavības apliecinājums, kas veidojas no reālā progresa.</p><div class="big" aria-hidden="true">03</div></article>
+  </div>
+</section>
+
+<section id="rezultats">
+  <div class="label">Ko saņemsiet</div>
+  <h2 class="h2">Skaidrs statuss ar pamatojumu</h2>
+  <div class="grid g2">
+    <article class="cell"><span class="tag">Piemērs, izdomāts uzņēmums</span><h3>Svarīgs pakalpojuma sniedzējs</h3><p>Reģistrēts Latvijā → privāts uzņēmums → pārtikas ražošana → vidējs uzņēmums → NKDL 21. p. 1. d. 2. pk.</p></article>
+    <article class="cell"><span class="tag">Avoti un dati</span><h3>Oficiālie teksti</h3><p><a href="https://likumi.lv/ta/id/353390-nacionalas-kiberdrosibas-likums" target="_blank" rel="noopener">Nacionālās kiberdrošības likums</a> un <a href="https://likumi.lv/ta/id/361481-minimalas-kiberdrosibas-prasibas" target="_blank" rel="noopener">MK noteikumi Nr. 397</a>. Teksts pārbaudīts 28.09.2026; likums mainās, tāpēc pārbaudiet aktuālo redakciju. Pārbaudes lapa rēķina rezultātu jūsu pārlūkā un pati atbildes nesaglabā; tā tiek izvietota claude.ai platformā, uz kuru attiecas tās noteikumi.</p></article>
+  </div>
+</section>
+
+<section id="robezas">
+  <div class="honest">
+    <div class="label">Godīgi par robežām</div>
+    <h2>Instruments nav jurists</h2>
+    <p>Tas nav juridisks atzinums un neaizstāj NKDC lēmumu: NKDL 22. panta 5. daļa dod NKDC tiesības noteikt statusu arī pretēji pašnovērtējumam. Sarežģītos gadījumos, piemēram, apakšuzņēmēja statusam kritiskās infrastruktūras tuvumā, ieteicama juridiska konsultācija.</p>
+    <p>Tas neaizstāj arī to, ko var darīt tikai sertificēts speciālists, piemēram, ielaušanās testēšanu (pentestu), kurai likums izvirza prasības par testētāja neatkarību.</p>
+  </div>
+</section>
+
+<section class="final" id="sakt">
+  <h2>10 minūtes. Bez maksas.</h2>
+  <p>Bez reģistrācijas. Pārbaudes lapa nesaglabā atbildes, rezultāts tiek aprēķināts jūsu pārlūkā.</p>
+  <a class="btn inv lg" href="https://claude.ai/artifact/4XScqgPJVxyhHupPjcFcRT" target="_blank" rel="noopener">Sākt pārbaudi →</a>
+</section>
+</main>
+
+<footer>
+  <p>Šī lapa un instruments nav juridisks pakalpojums un nesniedz juridiskas konsultācijas. Pamatā: Nacionālās kiberdrošības likums un MK noteikumi Nr. 397. Likums regulāri tiek grozīts, tāpēc pirms lēmumu pieņemšanas pārbaudiet aktuālo redakciju <a href="https://likumi.lv" target="_blank" rel="noopener">likumi.lv</a>.</p>
+</footer>
+
+<script>
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var hero=document.getElementById('hero'), inner=document.getElementById('hero-inner'), ticking=false;
+  if(!hero||!inner) return;
+  function update(){
+    var p=Math.min(Math.max(window.scrollY/(hero.offsetHeight*0.8),0),1);
+    inner.style.transform='scale('+(1+0.2*p).toFixed(3)+')';
+    inner.style.opacity=(1-p).toFixed(3);
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } },{passive:true});
+})();
+</script>
+</body>
+</html>

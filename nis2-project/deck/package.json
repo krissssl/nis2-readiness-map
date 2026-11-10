@@ -1,0 +1,1 @@
+{ "name": "nis2-deck", "private": true, "scripts": { "build": "node build.js" }, "dependencies": { "pptxgenjs": "^4.0.1" } }
